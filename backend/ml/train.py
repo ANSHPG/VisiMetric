@@ -21,7 +21,7 @@ class KADIDDataset(Dataset):
         img_name = os.path.join(self.img_dir, self.data.iloc[idx, 0])
         image = Image.open(img_name).convert('RGB')
         dmos = float(self.data.iloc[idx, 1])
-        scaled_dmos = (dmos - 1.0) * 25.0
+        scaled_dmos = (dmos - 1.0) / 4.0
         label = torch.tensor([scaled_dmos], dtype=torch.float32)
         if self.transform:
             image = self.transform(image)
@@ -40,7 +40,7 @@ class KonIQDataset(Dataset):
         img_name = os.path.join(self.img_dir, self.data.iloc[idx, 0])
         image = Image.open(img_name).convert('RGB')
         mos = float(self.data.iloc[idx, 7])
-        label = torch.tensor([mos], dtype=torch.float32)
+        label = torch.tensor([mos / 100.0], dtype=torch.float32)
         if self.transform:
             image = self.transform(image)
         return image, label
@@ -77,7 +77,10 @@ def train_model():
     dataloader = DataLoader(combined_dataset, batch_size=32, shuffle=True)
     print(f"Total training images (FAST DEMO MODE): {len(combined_dataset)}")
     model = efficientnet_b0(weights=EfficientNet_B0_Weights.DEFAULT)
-    model.classifier[1] = nn.Linear(model.classifier[1].in_features, 1)
+    model.classifier[1] = nn.Sequential(
+        nn.Linear(model.classifier[1].in_features, 1),
+        nn.Sigmoid()
+    )
     model = model.to(device)
     criterion = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)

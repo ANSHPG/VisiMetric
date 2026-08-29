@@ -16,7 +16,10 @@ def load_model():
         
     model_path = os.path.join(os.path.dirname(__file__), '../../ml/models/efficientnet_b0_v1.pth')
     base_model = efficientnet_b0()
-    base_model.classifier[1] = nn.Linear(base_model.classifier[1].in_features, 1)
+    base_model.classifier[1] = nn.Sequential(
+        nn.Linear(base_model.classifier[1].in_features, 1),
+        nn.Sigmoid()
+    )
     
     if os.path.exists(model_path):
         try:
@@ -42,7 +45,7 @@ def predict_quality(features: dict, image_bytes: bytes) -> dict:
     
     with torch.no_grad():
         output = model(img_t)
-        score = output.item()
+        score = output.item() * 100.0
         
     score = max(0.0, min(100.0, float(score)))
     
