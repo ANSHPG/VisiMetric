@@ -494,3 +494,8 @@ Every npm package is a maintenance liability and a potential supply-chain attack
 **Time:** 2026-08-29 15:11
 **Decision:** Created a `PROJECT_CONTEXT.md` file summarizing the repository structure.
 **Rationale:** To assist reviewers and future maintainers in navigating the two-tier architecture (FastAPI / React) and the decoupled ML training pipeline versus ML inference engine.
+
+### D-030: Switching from Categorical Classification to Float Regression
+**Time:** 2026-08-29 15:58
+**Decision:** Changed the PyTorch model's final output layer from 3 classification nodes to 1 regression node. Replaced `CrossEntropyLoss` with `MSELoss`. 
+**Rationale:** The previous classification-based design mapped quality scores to hard probabilities (e.g., 90% defective), which mathematically collapsed the frontend's 0-100 score down to single digits (like "3" or "4"). By switching to Regression, the neural network learns to predict a continuous true float value directly. KADID-10k's 1-5 scale is now mathematically translated to 0-100 before training `(DMOS - 1) * 25 = Score`, perfectly aligning it with KonIQ's native 0-100 system.
