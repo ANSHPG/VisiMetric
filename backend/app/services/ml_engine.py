@@ -16,7 +16,7 @@ def load_model():
         
     model_path = os.path.join(os.path.dirname(__file__), '../../ml/models/efficientnet_b0_v1.pth')
     base_model = efficientnet_b0()
-    base_model.classifier[1] = nn.Linear(base_model.classifier[1].in_features, 3)
+    base_model.classifier[1] = nn.Linear(base_model.classifier[1].in_features, 1)
     
     if os.path.exists(model_path):
         base_model.load_state_dict(torch.load(model_path, map_location=device))
@@ -38,35 +38,38 @@ def predict_quality(features: dict, image_bytes: bytes) -> dict:
     img_t = transform(image).unsqueeze(0).to(device)
     
     with torch.no_grad():
-        outputs = model(img_t)
-        probabilities = torch.nn.functional.softmax(outputs, dim=1)[0]
+        output = model(img_t)
+        score = output.item()
         
-    class_idx = torch.argmax(probabilities).item()
-    labels = ["ACCEPTABLE", "DEGRADED", "DEFECTIVE"]
-    label = labels[class_idx]
+    score = max(0.0, min(100.0, float(score)))
     
-    score = (probabilities[0].item() * 100) + (probabilities[1].item() * 50)
+    if score >= 65.0:
+        label = "ACCEPTABLE"
+    elif score >= 40.0:
+        label = "DEGRADED"
+    else:
+        label = "DEFECTIVE"
     
     issues = []
     if features.get("laplacian_variance", 0) < 100:
         issues.append({"type": "blur", "severity": "HIGH", "confidence": 0.88})
-        if label == "ACCEPTABLE": 
+        if label == "ACCEPTABLE":
             label = "DEGRADED"
-            score -= 20
+            score = max(0.0, score - 15)
             
     if features.get("mean_luminance", 0) < 50:
         issues.append({"type": "underexposure", "severity": "MEDIUM", "confidence": 0.75})
         if label == "ACCEPTABLE":
             label = "DEGRADED"
-            score -= 15
+            score = max(0.0, score - 15)
             
     if not issues and score < 60:
-        issues.append({"type": "complex distortion", "severity": "MEDIUM", "confidence": probabilities[class_idx].item()})
+        issues.append({"type": "complex distortion", "severity": "MEDIUM", "confidence": 0.85})
         if score < 30:
             issues[0]["severity"] = "HIGH"
             
     return {
-        "quality_score": max(0.0, min(100.0, float(score))),
+        "quality_score": score,
         "quality_label": label,
         "issues": issues
     }

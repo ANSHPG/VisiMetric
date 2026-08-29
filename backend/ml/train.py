@@ -21,12 +21,8 @@ class KADIDDataset(Dataset):
         img_name = os.path.join(self.img_dir, self.data.iloc[idx, 0])
         image = Image.open(img_name).convert('RGB')
         dmos = float(self.data.iloc[idx, 1])
-        if dmos >= 3.5:
-            label = 0
-        elif dmos >= 2.0:
-            label = 1
-        else:
-            label = 2
+        scaled_dmos = (dmos - 1.0) * 25.0
+        label = torch.tensor([scaled_dmos], dtype=torch.float32)
         if self.transform:
             image = self.transform(image)
         return image, label
@@ -44,12 +40,7 @@ class KonIQDataset(Dataset):
         img_name = os.path.join(self.img_dir, self.data.iloc[idx, 0])
         image = Image.open(img_name).convert('RGB')
         mos = float(self.data.iloc[idx, 7])
-        if mos >= 65.0:
-            label = 0
-        elif mos >= 40.0:
-            label = 1
-        else:
-            label = 2
+        label = torch.tensor([mos], dtype=torch.float32)
         if self.transform:
             image = self.transform(image)
         return image, label
@@ -79,9 +70,9 @@ def train_model():
     dataloader = DataLoader(combined_dataset, batch_size=32, shuffle=True)
     print(f"Total training images: {len(combined_dataset)}")
     model = efficientnet_b0(weights=EfficientNet_B0_Weights.DEFAULT)
-    model.classifier[1] = nn.Linear(model.classifier[1].in_features, 3)
+    model.classifier[1] = nn.Linear(model.classifier[1].in_features, 1)
     model = model.to(device)
-    criterion = nn.CrossEntropyLoss()
+    criterion = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     epochs = 5
     for epoch in range(epochs):
