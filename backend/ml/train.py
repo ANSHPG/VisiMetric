@@ -45,9 +45,7 @@ def train_model():
     ])
     
     dataset = KADIDDataset(csv_file=os.path.join(os.path.dirname(__file__), 'kadid10k/image_labeled_by_per_noise.csv'), img_dir=os.path.join(os.path.dirname(__file__), 'kadid10k/images/'), transform=transform)
-    subset_indices = list(range(1000))
-    subset_dataset = Subset(dataset, subset_indices)
-    dataloader = DataLoader(subset_dataset, batch_size=32, shuffle=True)
+    dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
         
     model = efficientnet_b0(weights=EfficientNet_B0_Weights.DEFAULT)
     model.classifier[1] = nn.Linear(model.classifier[1].in_features, 3)
@@ -56,7 +54,7 @@ def train_model():
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     
-    epochs = 1
+    epochs = 5
     for epoch in range(epochs):
         model.train()
         running_loss = 0.0
