@@ -462,3 +462,20 @@ Every npm package is a maintenance liability and a potential supply-chain attack
 **Context:** Full-stack app requires frontend, backend, and ML training code.
 **Decision:** Scaffolded a monorepo with `frontend/`, `backend/`, `sample_images/`, and root-level Docker config.
 **Rationale:** Simplifies submission for the internship assessment. The reviewer only needs to clone one repo and run `docker compose up --build`.
+
+---
+
+## SESSION 4 — Containerization & Orchestration
+### Date: 2026-08-29
+
+---
+
+### [2026-08-29 12:05] [D-025] [DOCKERFILES] — Dependency handling without comments
+**Context:** Docker Compose needs instructions to build the images.
+**Decision:** Created minimalist Dockerfiles for both frontend (Node 20 Alpine) and backend (Python 3.11 Slim). Explicitly included libgl1 and libglib2.0-0 in the backend for OpenCV headless support. Maintained the strict zero-comment rule.
+**Rationale:** Without the system libraries, OpenCV will crash on import inside a Debian slim container. Node Alpine keeps the frontend build lightweight.
+
+### [2026-08-29 12:05] [D-026] [COMPOSE LAUNCH] — Local orchestration
+**Context:** Application needs to be launched and tested.
+**Decision:** Executed docker compose up --build -d to compile the containers and start the services in detached mode.
+**Rationale:** Validates that the scaffolding successfully assembles into a working full-stack network.
