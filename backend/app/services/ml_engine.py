@@ -1,23 +1,67 @@
-def predict_quality(features: dict) -> dict:
-    score = 85.0
-    label = "ACCEPTABLE"
-    issues = []
+import torch
+import torch.nn as nn
+from torchvision.models import efficientnet_b0
+import torchvision.transforms as transforms
+from PIL import Image
+import io
+import os
+
+model = None
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+def load_model():
+    global model
+    if model is not None:
+        return
+        
+    model_path = os.path.join(os.path.dirname(__file__), '../../ml/models/efficientnet_b0_v1.pth')
+    base_model = efficientnet_b0()
+    base_model.classifier[1] = nn.Linear(base_model.classifier[1].in_features, 3)
     
+    if os.path.exists(model_path):
+        base_model.load_state_dict(torch.load(model_path, map_location=device))
+        
+    base_model = base_model.to(device)
+    base_model.eval()
+    model = base_model
+
+def predict_quality(features: dict, image_bytes: bytes) -> dict:
+    load_model()
+    
+    image = Image.open(io.BytesIO(image_bytes)).convert('RGB')
+    transform = transforms.Compose([
+        transforms.Resize((224, 224)),
+        transforms.ToTensor(),
+        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+    ])
+    
+    img_t = transform(image).unsqueeze(0).to(device)
+    
+    with torch.no_grad():
+        outputs = model(img_t)
+        probabilities = torch.nn.functional.softmax(outputs, dim=1)[0]
+        
+    class_idx = torch.argmax(probabilities).item()
+    labels = ["ACCEPTABLE", "DEGRADED", "DEFECTIVE"]
+    label = labels[class_idx]
+    
+    score = (probabilities[0].item() * 100) + (probabilities[1].item() * 50)
+    
+    issues = []
     if features.get("laplacian_variance", 0) < 100:
-        score -= 30
-        label = "DEGRADED"
         issues.append({"type": "blur", "severity": "HIGH", "confidence": 0.88})
-        
+        if label == "ACCEPTABLE": 
+            label = "DEGRADED"
+            score -= 20
+            
     if features.get("mean_luminance", 0) < 50:
-        score -= 20
-        label = "DEGRADED"
         issues.append({"type": "underexposure", "severity": "MEDIUM", "confidence": 0.75})
-        
-    if score < 40:
-        label = "DEFECTIVE"
-        
+        if label == "ACCEPTABLE":
+            label = "DEGRADED"
+            score -= 15
+            
     return {
-        "quality_score": score,
+        "quality_score": max(0.0, min(100.0, float(score))),
         "quality_label": label,
         "issues": issues
     }

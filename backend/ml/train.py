@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset, DataLoader, Subset
 import torchvision.transforms as transforms
 from torchvision.models import efficientnet_b0, EfficientNet_B0_Weights
 import pandas as pd
@@ -22,9 +22,9 @@ class KADIDDataset(Dataset):
         image = Image.open(img_name).convert('RGB')
         dmos = float(self.data.iloc[idx, 1])
         
-        if dmos >= 70:
+        if dmos >= 3.5:
             label = 0
-        elif dmos >= 40:
+        elif dmos >= 2.0:
             label = 1
         else:
             label = 2
@@ -36,6 +36,7 @@ class KADIDDataset(Dataset):
 
 def train_model():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    print(f"Using device: {device}")
     
     transform = transforms.Compose([
         transforms.Resize((224, 224)),
@@ -43,12 +44,10 @@ def train_model():
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ])
     
-    try:
-        dataset = KADIDDataset(csv_file='kadid10k/dmos.csv', img_dir='kadid10k/images/', transform=transform)
-        dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
-    except Exception as e:
-        print("Dataset not found. Please download KADID-10k and extract to backend/ml/kadid10k/")
-        return
+    dataset = KADIDDataset(csv_file='kadid10k/image_labeled_by_per_noise.csv', img_dir='kadid10k/images/', transform=transform)
+    subset_indices = list(range(1000))
+    subset_dataset = Subset(dataset, subset_indices)
+    dataloader = DataLoader(subset_dataset, batch_size=32, shuffle=True)
         
     model = efficientnet_b0(weights=EfficientNet_B0_Weights.DEFAULT)
     model.classifier[1] = nn.Linear(model.classifier[1].in_features, 3)
@@ -57,22 +56,22 @@ def train_model():
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
     
-    epochs = 10
+    epochs = 1
     for epoch in range(epochs):
         model.train()
         running_loss = 0.0
-        for inputs, labels in dataloader:
+        for i, (inputs, labels) in enumerate(dataloader):
             inputs, labels = inputs.to(device), labels.to(device)
-            
             optimizer.zero_grad()
             outputs = model(inputs)
             loss = criterion(outputs, labels)
             loss.backward()
             optimizer.step()
-            
             running_loss += loss.item()
-            
-        print(f"Epoch {epoch+1}/{epochs} Loss: {running_loss/len(dataloader)}")
+            if i % 10 == 0:
+                print(f"Batch {i}/{len(dataloader)} Loss: {loss.item():.4f}")
+                
+        print(f"Epoch {epoch+1}/{epochs} Loss: {running_loss/len(dataloader):.4f}")
         
     os.makedirs('models', exist_ok=True)
     torch.save(model.state_dict(), 'models/efficientnet_b0_v1.pth')

@@ -10,7 +10,7 @@ async def analyze_and_store(filename: str, file_bytes: bytes, db: AsyncSession):
     file_hash = hashlib.sha256(file_bytes).hexdigest()
     
     features = extract_features(file_bytes)
-    prediction = predict_quality(features)
+    prediction = predict_quality(features, file_bytes)
     
     db_record = AnalysisResult(
         filename=filename,
