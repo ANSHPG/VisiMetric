@@ -499,3 +499,13 @@ Every npm package is a maintenance liability and a potential supply-chain attack
 **Time:** 2026-08-29 15:58
 **Decision:** Changed the PyTorch model's final output layer from 3 classification nodes to 1 regression node. Replaced `CrossEntropyLoss` with `MSELoss`. 
 **Rationale:** The previous classification-based design mapped quality scores to hard probabilities (e.g., 90% defective), which mathematically collapsed the frontend's 0-100 score down to single digits (like "3" or "4"). By switching to Regression, the neural network learns to predict a continuous true float value directly. KADID-10k's 1-5 scale is now mathematically translated to 0-100 before training `(DMOS - 1) * 25 = Score`, perfectly aligning it with KonIQ's native 0-100 system.
+
+### D-031: NVIDIA Corporate UI Revamp & Legacy Archiving
+**Time:** 2026-08-29 18:20
+**Decision:** Overhauled the frontend UI to rigorously mirror NVIDIA corporate design guidelines (deep blacks `#000000`, dark greys `#1a1a1a`, primary green accents `#76b900`, massive hero backgrounds, and multi-column footers). The original UI was safely extracted into `LegacyHomePage.jsx` and preserved via the `/archive` router path.
+**Rationale:** Client requested a highly professional, enterprise-grade aesthetic mirroring industry leaders to augment the technical sophistication of the dual-engine ML pipeline.
+
+### D-032: Information Architecture & Routing Expansion
+**Time:** 2026-08-29 18:28
+**Decision:** Stripped non-essential external links from the footer (Developers, News, Support) to streamline the corporate presentation. Scaffolded and deployed full pages for `/solutions`, `/products`, `/about`, and `/policies` to ensure the application functions as a cohesive corporate domain. Inverted the NavBar background from black to `#76b900` (NVIDIA green) for enhanced visual weight.
+**Rationale:** Prevents dead links in the presentation layout, fulfills user requirement for a complete "Solutions" page, and unifies the top-level navigation with the primary brand color.

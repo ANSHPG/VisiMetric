@@ -6,17 +6,17 @@ import LegacyHomePage from './LegacyHomePage'
 
 function NavBar() {
   return (
-    <nav className="sticky top-0 z-50 h-[64px] bg-black text-white flex items-center justify-between px-[48px] shadow-sm border-b border-[#222]">
-      <Link to="/" className="font-nvidia font-bold text-[24px] text-[#76b900] no-underline tracking-wide">VISIMETRIC</Link>
+    <nav className="sticky top-0 z-50 h-[64px] bg-[#76b900] text-black flex items-center justify-between px-[48px] shadow-sm">
+      <Link to="/" className="font-nvidia font-bold text-[24px] text-black no-underline tracking-wide hover:opacity-80 transition-opacity">VISIMETRIC</Link>
       <div className="flex gap-[32px]">
-        <Link to="/" className="font-bold cursor-pointer hover:text-[#76b900] transition-colors no-underline text-white text-[15px]">Products</Link>
-        <Link to="/" className="font-bold cursor-pointer hover:text-[#76b900] transition-colors no-underline text-white text-[15px]">Solutions</Link>
-        <Link to="/history" className="font-bold cursor-pointer hover:text-[#76b900] transition-colors no-underline text-white text-[15px]">History</Link>
-        <Link to="/archive" className="font-bold cursor-pointer hover:text-[#76b900] transition-colors no-underline text-gray-400 text-[15px]">Archive UI</Link>
+        <Link to="/products" className="font-bold cursor-pointer hover:text-white transition-colors no-underline text-black text-[15px]">Products</Link>
+        <Link to="/solutions" className="font-bold cursor-pointer hover:text-white transition-colors no-underline text-black text-[15px]">Solutions</Link>
+        <Link to="/history" className="font-bold cursor-pointer hover:text-white transition-colors no-underline text-black text-[15px]">History</Link>
+        <Link to="/archive" className="font-bold cursor-pointer hover:text-[#222] transition-colors no-underline text-black/80 text-[15px]">Archive UI</Link>
       </div>
       <div className="flex gap-[24px] text-[18px]">
-        <i className="fa-solid fa-magnifying-glass cursor-pointer hover:text-[#76b900] transition-colors"></i>
-        <i className="fa-regular fa-user cursor-pointer hover:text-[#76b900] transition-colors"></i>
+        <i className="fa-solid fa-magnifying-glass cursor-pointer hover:text-white transition-colors"></i>
+        <i className="fa-regular fa-user cursor-pointer hover:text-white transition-colors"></i>
       </div>
     </nav>
   )
@@ -24,30 +24,14 @@ function NavBar() {
 
 function Footer() {
   return (
-    <footer className="bg-[#111] text-[#ccc] pt-[80px] pb-[40px] px-[48px] mt-auto">
+    <footer className="bg-[#111] text-[#ccc] pt-[80px] pb-[40px] px-[48px] mt-auto border-t border-[#333]">
       <div className="max-w-[1400px] mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-[48px] mb-[64px]">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-[48px] mb-[64px]">
           <div>
             <h4 className="text-white font-bold mb-[24px] text-[18px]">Corporate Information</h4>
-            <p className="mb-[12px] cursor-pointer text-[#ccc] hover:text-[#76b900] transition-colors text-[14px]">About VisiMetric</p>
-            <p className="mb-[12px] cursor-pointer text-[#ccc] hover:text-[#76b900] transition-colors text-[14px]">Corporate Policies</p>
-            <p className="mb-[12px] cursor-pointer text-[#ccc] hover:text-[#76b900] transition-colors text-[14px]">GitHub Repository</p>
-          </div>
-          <div>
-            <h4 className="text-white font-bold mb-[24px] text-[18px]">Developers</h4>
-            <p className="mb-[12px] cursor-pointer text-[#ccc] hover:text-[#76b900] transition-colors text-[14px]">Analyze Endpoint API</p>
-            <p className="mb-[12px] cursor-pointer text-[#ccc] hover:text-[#76b900] transition-colors text-[14px]">Health Check Status</p>
-            <p className="mb-[12px] cursor-pointer text-[#ccc] hover:text-[#76b900] transition-colors text-[14px]">Documentation</p>
-          </div>
-          <div>
-            <h4 className="text-white font-bold mb-[24px] text-[18px]">News & Events</h4>
-            <p className="mb-[12px] cursor-pointer text-[#ccc] hover:text-[#76b900] transition-colors text-[14px]">Press Room</p>
-            <p className="mb-[12px] cursor-pointer text-[#ccc] hover:text-[#76b900] transition-colors text-[14px]">VisiMetric Blog</p>
-          </div>
-          <div>
-            <h4 className="text-white font-bold mb-[24px] text-[18px]">Support</h4>
-            <p className="mb-[12px] cursor-pointer text-[#ccc] hover:text-[#76b900] transition-colors text-[14px]">Contact Us</p>
-            <p className="mb-[12px] cursor-pointer text-[#ccc] hover:text-[#76b900] transition-colors text-[14px]">Technical Support</p>
+            <Link to="/about" className="block mb-[12px] cursor-pointer text-[#ccc] hover:text-[#76b900] transition-colors text-[14px] no-underline">About VisiMetric</Link>
+            <Link to="/policies" className="block mb-[12px] cursor-pointer text-[#ccc] hover:text-[#76b900] transition-colors text-[14px] no-underline">Corporate Policies</Link>
+            <a href="https://github.com/ANSHPG/VisiMetric" target="_blank" rel="noreferrer" className="block mb-[12px] cursor-pointer text-[#ccc] hover:text-[#76b900] transition-colors text-[14px] no-underline">GitHub Repository</a>
           </div>
         </div>
         <div className="border-t border-[#333] pt-[32px] flex items-center justify-between text-[12px]">
@@ -63,6 +47,83 @@ function Footer() {
         </div>
       </div>
     </footer>
+  )
+}
+
+function SolutionsPage() {
+  return (
+    <main className="min-h-screen bg-black text-white p-[48px] max-w-[1400px] mx-auto font-sans">
+        <h1 className="text-[48px] font-bold mb-[24px] text-white">VisiMetric Solutions</h1>
+        <p className="text-[18px] text-gray-400 mb-[48px] max-w-[800px]">
+          Discover how VisiMetric provides enterprise-grade AI image diagnostics across multiple industries.
+        </p>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[32px]">
+            <div className="bg-[#1a1a1a] p-[40px] border border-[#333] rounded-sm hover:border-[#76b900] transition-colors cursor-pointer">
+                <h3 className="text-[24px] font-bold text-[#76b900] mb-[16px]">Healthcare Imaging</h3>
+                <p className="text-gray-400 leading-relaxed">Ensure automated visual quality checks on X-ray and MRI outputs before they reach diagnosticians. VisiMetric removes blurs and exposure artifacts from your pipeline instantly.</p>
+            </div>
+            <div className="bg-[#1a1a1a] p-[40px] border border-[#333] rounded-sm hover:border-[#76b900] transition-colors cursor-pointer">
+                <h3 className="text-[24px] font-bold text-[#76b900] mb-[16px]">E-Commerce Moderation</h3>
+                <p className="text-gray-400 leading-relaxed">Automatically reject poorly lit, heavily distorted, or heavily compressed merchant uploads to maintain a pristine, high-conversion storefront.</p>
+            </div>
+            <div className="bg-[#1a1a1a] p-[40px] border border-[#333] rounded-sm hover:border-[#76b900] transition-colors cursor-pointer">
+                <h3 className="text-[24px] font-bold text-[#76b900] mb-[16px]">Autonomous Vehicles</h3>
+                <p className="text-gray-400 leading-relaxed">Filter degraded telemetry camera feeds in real-time. If a camera lens becomes occluded or severely noisy, the system seamlessly triggers fallback safety logic.</p>
+            </div>
+        </div>
+    </main>
+  )
+}
+
+function ProductsPage() {
+  return (
+    <main className="min-h-screen bg-black text-white p-[48px] max-w-[1400px] mx-auto font-sans">
+        <h1 className="text-[48px] font-bold mb-[24px] text-white">VisiMetric Products</h1>
+        <p className="text-[18px] text-gray-400 mb-[48px] max-w-[800px]">
+          Our core technologies powering the next generation of visual telemetry.
+        </p>
+        <div className="bg-[#1a1a1a] p-[48px] border border-[#333] rounded-sm flex flex-col md:flex-row gap-[48px] items-center mb-[32px] hover:border-[#76b900] transition-colors">
+            <div className="flex-1">
+                <h3 className="text-[32px] font-bold text-white mb-[16px]">VisiMetric AI Core</h3>
+                <p className="text-gray-400 mb-[24px] text-[18px] leading-relaxed">A Continuous Float Regression neural network built on PyTorch, bounded by Sigmoid activations for flawless 0-100 quality scoring.</p>
+                <Link to="/" className="text-black bg-[#76b900] px-[24px] py-[12px] font-bold rounded-sm no-underline hover:bg-white transition-colors inline-block mt-[16px]">Test Core Now</Link>
+            </div>
+            <div className="flex-1">
+                <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=800&auto=format&fit=crop" className="w-full h-auto rounded-sm" alt="Product Core"/>
+            </div>
+        </div>
+    </main>
+  )
+}
+
+function AboutPage() {
+  return (
+    <main className="min-h-screen bg-black text-white p-[48px] max-w-[1400px] mx-auto font-sans">
+        <h1 className="text-[48px] font-bold mb-[24px] text-[#76b900]">About VisiMetric</h1>
+        <div className="bg-[#1a1a1a] p-[48px] border border-[#333] rounded-sm max-w-[800px]">
+            <p className="text-gray-300 text-[18px] leading-relaxed mb-[24px]">
+              VisiMetric was founded to solve a singular problem: automating human-level perception of image degradation at scale. 
+            </p>
+            <p className="text-gray-300 text-[18px] leading-relaxed">
+              By merging deterministic OpenCV pipelines with deep neural networks trained on over 20,000 empirical images, we provide enterprise-ready vision diagnostics.
+            </p>
+        </div>
+    </main>
+  )
+}
+
+function PoliciesPage() {
+  return (
+    <main className="min-h-screen bg-black text-white p-[48px] max-w-[1400px] mx-auto font-sans">
+        <h1 className="text-[48px] font-bold mb-[24px] text-white">Corporate Policies</h1>
+        <div className="bg-[#1a1a1a] p-[48px] border border-[#333] rounded-sm max-w-[1000px]">
+            <h3 className="text-[24px] font-bold text-[#76b900] mb-[16px]">Privacy & Telemetry</h3>
+            <p className="text-gray-300 text-[16px] leading-relaxed mb-[32px]">Images uploaded to VisiMetric servers are processed entirely in memory via the FastAPI backend and instantly discarded after metrics extraction. We do not persist raw image binary data.</p>
+            
+            <h3 className="text-[24px] font-bold text-[#76b900] mb-[16px]">Open Source Commitment</h3>
+            <p className="text-gray-300 text-[16px] leading-relaxed">Our PyTorch training algorithms and datasets (KADID-10k and KonIQ-10k mappings) are transparent and available to researchers on our GitHub repository.</p>
+        </div>
+    </main>
   )
 }
 
@@ -115,7 +176,7 @@ function NVIDIAHomePage() {
           </p>
           <button 
             onClick={() => document.getElementById('upload-section').scrollIntoView({ behavior: 'smooth' })}
-            className="bg-[#76b900] text-black font-bold text-[18px] px-[32px] py-[16px] rounded-sm hover:bg-[#88d400] transition-colors"
+            className="bg-[#76b900] text-black font-bold text-[18px] px-[32px] py-[16px] rounded-sm hover:bg-white transition-colors"
           >
             Start Analyzing Now
           </button>
@@ -316,6 +377,10 @@ export default function App() {
           <Route path="/analyze/:id" element={<AnalysisResultPage />} />
           <Route path="/history" element={<HistoryPage />} />
           <Route path="/archive" element={<LegacyHomePage />} />
+          <Route path="/solutions" element={<SolutionsPage />} />
+          <Route path="/products" element={<ProductsPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/policies" element={<PoliciesPage />} />
         </Routes>
       </div>
       <Footer />
