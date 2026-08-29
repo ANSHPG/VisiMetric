@@ -2,7 +2,6 @@ import React, { useRef, useState, useEffect } from 'react'
 import { Routes, Route, useNavigate, useParams, Link } from 'react-router-dom'
 import { uploadImage } from './services/api'
 import axios from 'axios'
-import LegacyHomePage from './LegacyHomePage'
 
 function NavBar() {
   return (
@@ -12,7 +11,7 @@ function NavBar() {
         <Link to="/products" className="font-bold cursor-pointer hover:text-white transition-colors no-underline text-black text-[15px]">Products</Link>
         <Link to="/solutions" className="font-bold cursor-pointer hover:text-white transition-colors no-underline text-black text-[15px]">Solutions</Link>
         <Link to="/history" className="font-bold cursor-pointer hover:text-white transition-colors no-underline text-black text-[15px]">History</Link>
-        <Link to="/archive" className="font-bold cursor-pointer hover:text-[#222] transition-colors no-underline text-black/80 text-[15px]">Archive UI</Link>
+        
       </div>
       <div className="flex gap-[24px] text-[18px]">
         <i className="fa-solid fa-magnifying-glass cursor-pointer hover:text-white transition-colors"></i>
@@ -127,7 +126,7 @@ function PoliciesPage() {
   )
 }
 
-function NVIDIAHomePage() {
+function HomePage() {
   const fileInputRef = useRef(null)
   const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
@@ -153,91 +152,41 @@ function NVIDIAHomePage() {
   }
 
   return (
-    <main className="min-h-screen bg-black text-white font-sans">
-      
-      <section className="relative w-full h-[85vh] bg-[#111] overflow-hidden flex items-center">
-        <div className="absolute inset-0 z-0">
-          <img 
-            src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=2560&auto=format&fit=crop" 
-            alt="AI Core Background" 
-            className="w-full h-full object-cover opacity-40 mix-blend-luminosity" 
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent"></div>
+    <main className="min-h-screen bg-canvas">
+      <section className="relative bg-surface-dark px-[48px] h-[calc(100vh-64px)] flex items-center justify-between overflow-hidden">
+        <div className="w-[50%] z-10">
+          <span className="text-[14px] font-bold text-primary uppercase block mb-[16px]">IMAGE QUALITY ASSESSMENT</span>
+          <h1 className="text-[48px] font-bold text-on-dark leading-[1.25] mb-[24px]">See Every Flaw.<br/>Score Every Frame.</h1>
+          <p className="text-[22px] text-on-dark-mute leading-[1.75] mb-[32px]">AI-powered image quality analysis. Detects blur, noise, exposure failures, and visual defects locally.</p>
+          <div className="flex gap-[16px]">
+            <button onClick={handleUploadClick} className="bg-primary text-on-primary h-[44px] px-[24px] rounded-sm font-bold text-[16px] hover:bg-primary-dark transition-colors">
+              {loading ? 'Analyzing...' : 'Analyze an Image'}
+            </button>
+            <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" />
+          </div>
+          {error && <p className="text-error mt-[16px] text-[14px] font-bold">{error}</p>}
+        </div>
+        <div className="w-[45%] h-full flex items-center justify-center py-[64px] z-10">
+          <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1280&auto=format&fit=crop" alt="AI Core" className="w-full h-full max-h-[60vh] object-cover rounded-sm shadow-[0_0_40px_rgba(118,185,0,0.2)]" />
         </div>
         
-        <div className="relative z-10 max-w-[1400px] w-full mx-auto px-[48px]">
-          <h1 className="text-[64px] font-bold leading-[1.1] mb-[24px] max-w-[800px]">
-            THE ERA OF <br/>
-            <span className="text-[#76b900]">AI-POWERED</span> <br/>
-            QUALITY ASSESSMENT
-          </h1>
-          <p className="text-[24px] text-gray-300 mb-[40px] max-w-[600px] font-light">
-            VisiMetric delivers enterprise-grade image analysis, detecting complex distortions instantly.
-          </p>
-          <button 
-            onClick={() => document.getElementById('upload-section').scrollIntoView({ behavior: 'smooth' })}
-            className="bg-[#76b900] text-black font-bold text-[18px] px-[32px] py-[16px] rounded-sm hover:bg-white transition-colors"
-          >
-            Start Analyzing Now
-          </button>
+        <div className="absolute bottom-[32px] left-1/2 -translate-x-1/2 flex flex-col items-center animate-bounce text-on-dark-mute">
+          <span className="text-[12px] font-bold uppercase tracking-widest mb-[8px]">Scroll Down</span>
+          <i className="fa-solid fa-chevron-down text-primary"></i>
         </div>
       </section>
 
-      <section id="upload-section" className="py-[120px] px-[48px] max-w-[1400px] mx-auto">
-        <div className="flex flex-col md:flex-row gap-[64px] items-start">
-          
-          <div className="flex-1 w-full">
-            <h2 className="text-[32px] font-bold mb-[16px]">Run Quality Diagnostics</h2>
-            <p className="text-gray-400 mb-[32px] text-[18px]">Leverage our dual-engine architecture (OpenCV + EfficientNet) to score your media.</p>
-            
-            <div 
-              onClick={handleUploadClick} 
-              className="group border border-[#333] hover:border-[#76b900] bg-[#1a1a1a] p-[48px] rounded-sm flex flex-col items-center justify-center cursor-pointer transition-all h-[300px]"
-            >
-              <div className="text-[56px] text-[#76b900] mb-[24px] group-hover:scale-110 transition-transform">
-                <i className="fa-solid fa-cloud-arrow-up"></i>
-              </div>
-              <h3 className="text-[24px] font-bold text-white mb-[8px]">Upload Media for Analysis</h3>
-              <p className="text-[16px] text-gray-400 mb-[24px]">JPG, PNG, WebP supported</p>
-              
-              {loading ? (
-                <div className="w-full bg-[#333] h-[4px] rounded-full overflow-hidden max-w-[200px]">
-                  <div className="bg-[#76b900] h-full w-[50%] animate-pulse"></div>
-                </div>
-              ) : (
-                <div className="text-[#76b900] font-bold border border-[#76b900] px-[24px] py-[8px] rounded-sm group-hover:bg-[#76b900] group-hover:text-black transition-colors">
-                  Browse Files
-                </div>
-              )}
-            </div>
-            <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" />
-            {error && <p className="text-red-500 mt-[16px] text-[16px] font-bold">{error}</p>}
+      <section className="py-[120px] px-[48px] max-w-[1280px] mx-auto min-h-[60vh] flex flex-col justify-center">
+        <h2 className="text-[36px] font-bold text-ink mb-[8px] text-center">Analyze Your Image</h2>
+        <span className="text-[14px] font-bold text-primary uppercase block mb-[48px] text-center">UPLOAD & SCORE</span>
+        
+        <div onClick={handleUploadClick} className="border-2 border-dashed border-hairline hover:border-primary p-[32px] rounded-sm min-h-[280px] w-full max-w-[640px] flex flex-col items-center justify-center cursor-pointer bg-surface-soft mx-auto transition-colors">
+          <div className="text-[48px] text-primary mb-[16px]">
+            <i className="fa-solid fa-cloud-arrow-up"></i>
           </div>
-
-          <div className="flex-1 grid grid-cols-1 md:grid-cols-2 gap-[24px] w-full">
-            <div className="bg-[#1a1a1a] border border-[#333] hover:border-[#76b900] transition-colors rounded-sm overflow-hidden group cursor-pointer">
-              <div className="h-[160px] overflow-hidden">
-                 <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=600&auto=format&fit=crop" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              </div>
-              <div className="p-[24px]">
-                <span className="text-[#76b900] font-bold text-[12px] uppercase mb-[8px] block">Architecture</span>
-                <h3 className="font-bold text-[18px] mb-[12px]">PyTorch Integration</h3>
-                <p className="text-gray-400 text-[14px]">Discover how VisiMetric utilizes continuous float regression for flawless scoring.</p>
-              </div>
-            </div>
-
-            <div className="bg-[#1a1a1a] border border-[#333] hover:border-[#76b900] transition-colors rounded-sm overflow-hidden group cursor-pointer">
-              <div className="h-[160px] overflow-hidden">
-                 <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?q=80&w=600&auto=format&fit=crop" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
-              </div>
-              <div className="p-[24px]">
-                <span className="text-[#76b900] font-bold text-[12px] uppercase mb-[8px] block">Dataset</span>
-                <h3 className="font-bold text-[18px] mb-[12px]">Trained on KonIQ-10k</h3>
-                <p className="text-gray-400 text-[14px]">Over 20,000 real-world images processed to guarantee production-ready AI.</p>
-              </div>
-            </div>
-          </div>
-
+          <h3 className="text-[20px] font-bold text-ink mb-[8px]">Drop your image here</h3>
+          <p className="text-[15px] text-mute mb-[16px]">or click to browse — JPG, PNG, WebP up to 20 MB</p>
+          {loading && <div className="w-full bg-hairline h-[4px] mt-[16px] rounded-full overflow-hidden max-w-[300px]"><div className="bg-primary h-full w-[50%] animate-pulse"></div></div>}
         </div>
       </section>
     </main>
@@ -373,11 +322,10 @@ export default function App() {
       <NavBar />
       <div className="flex-grow">
         <Routes>
-          <Route path="/" element={<NVIDIAHomePage />} />
+          <Route path="/" element={<HomePage />} />
           <Route path="/analyze/:id" element={<AnalysisResultPage />} />
           <Route path="/history" element={<HistoryPage />} />
-          <Route path="/archive" element={<LegacyHomePage />} />
-          <Route path="/solutions" element={<SolutionsPage />} />
+                    <Route path="/solutions" element={<SolutionsPage />} />
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/policies" element={<PoliciesPage />} />
