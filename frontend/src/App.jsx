@@ -21,13 +21,13 @@ function Footer() {
       <div className="grid grid-cols-4 gap-[24px] mb-[64px]">
         <div>
           <h4 className="text-on-dark font-bold mb-[16px]">VisiMetric</h4>
-          <p className="mb-[8px] cursor-pointer hover:text-white">About</p>
-          <p className="mb-[8px] cursor-pointer hover:text-white">GitHub</p>
+          <p className="mb-[8px] cursor-pointer text-white hover:text-primary transition-colors">About</p>
+          <p className="mb-[8px] cursor-pointer text-white hover:text-primary transition-colors">GitHub</p>
         </div>
         <div>
           <h4 className="text-on-dark font-bold mb-[16px]">API</h4>
-          <p className="mb-[8px] cursor-pointer hover:text-white">Analyze Endpoint</p>
-          <p className="mb-[8px] cursor-pointer hover:text-white">Health Check</p>
+          <p className="mb-[8px] cursor-pointer text-white hover:text-primary transition-colors">Analyze Endpoint</p>
+          <p className="mb-[8px] cursor-pointer text-white hover:text-primary transition-colors">Health Check</p>
         </div>
       </div>
       <div className="border-t border-hairline-strong pt-[24px] text-[10px] text-mute uppercase">
@@ -64,30 +64,35 @@ function HomePage() {
 
   return (
     <main className="min-h-screen bg-canvas">
-      <section className="bg-surface-dark py-[80px] px-[48px] flex items-center justify-between">
-        <div className="w-[50%]">
+      <section className="relative bg-surface-dark px-[48px] h-[calc(100vh-64px)] flex items-center justify-between overflow-hidden">
+        <div className="w-[50%] z-10">
           <span className="text-[14px] font-bold text-primary uppercase block mb-[16px]">IMAGE QUALITY ASSESSMENT</span>
           <h1 className="text-[48px] font-bold text-on-dark leading-[1.25] mb-[24px]">See Every Flaw.<br/>Score Every Frame.</h1>
           <p className="text-[22px] text-on-dark-mute leading-[1.75] mb-[32px]">AI-powered image quality analysis. Detects blur, noise, exposure failures, and visual defects locally.</p>
           <div className="flex gap-[16px]">
-            <button onClick={handleUploadClick} className="bg-primary text-on-primary h-[44px] px-[24px] rounded-sm font-bold text-[16px]">
+            <button onClick={handleUploadClick} className="bg-primary text-on-primary h-[44px] px-[24px] rounded-sm font-bold text-[16px] hover:bg-primary-dark transition-colors">
               {loading ? 'Analyzing...' : 'Analyze an Image'}
             </button>
             <input type="file" ref={fileInputRef} onChange={handleFileChange} className="hidden" accept="image/*" />
           </div>
           {error && <p className="text-error mt-[16px] text-[14px] font-bold">{error}</p>}
         </div>
-        <div className="w-[45%]">
-          <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1280&auto=format&fit=crop" alt="AI Core" className="w-full h-auto rounded-sm object-cover" />
+        <div className="w-[45%] h-full flex items-center justify-center py-[64px] z-10">
+          <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1280&auto=format&fit=crop" alt="AI Core" className="w-full h-full max-h-[60vh] object-cover rounded-sm shadow-[0_0_40px_rgba(118,185,0,0.2)]" />
+        </div>
+        
+        <div className="absolute bottom-[32px] left-1/2 -translate-x-1/2 flex flex-col items-center animate-bounce text-on-dark-mute">
+          <span className="text-[12px] font-bold uppercase tracking-widest mb-[8px]">Scroll Down</span>
+          <i className="fa-solid fa-chevron-down text-primary"></i>
         </div>
       </section>
 
-      <section className="py-[64px] px-[48px] max-w-[1280px] mx-auto">
-        <h2 className="text-[36px] font-bold text-ink mb-[8px]">Analyze Your Image</h2>
-        <span className="text-[14px] font-bold text-primary uppercase block mb-[32px]">UPLOAD & SCORE</span>
+      <section className="py-[120px] px-[48px] max-w-[1280px] mx-auto min-h-[60vh] flex flex-col justify-center">
+        <h2 className="text-[36px] font-bold text-ink mb-[8px] text-center">Analyze Your Image</h2>
+        <span className="text-[14px] font-bold text-primary uppercase block mb-[48px] text-center">UPLOAD & SCORE</span>
         
-        <div onClick={handleUploadClick} className="border-2 border-dashed border-hairline hover:border-primary p-[32px] rounded-sm min-h-[240px] max-w-[640px] flex flex-col items-center justify-center cursor-pointer bg-surface-soft mx-auto">
-          <div className="text-[40px] text-primary mb-[16px]">
+        <div onClick={handleUploadClick} className="border-2 border-dashed border-hairline hover:border-primary p-[32px] rounded-sm min-h-[280px] w-full max-w-[640px] flex flex-col items-center justify-center cursor-pointer bg-surface-soft mx-auto transition-colors">
+          <div className="text-[48px] text-primary mb-[16px]">
             <i className="fa-solid fa-cloud-arrow-up"></i>
           </div>
           <h3 className="text-[20px] font-bold text-ink mb-[8px]">Drop your image here</h3>
@@ -172,10 +177,51 @@ function AnalysisResultPage() {
 }
 
 function HistoryPage() {
+    const [history, setHistory] = useState([])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        const fetchHistory = async () => {
+            try {
+                const api = axios.create({ baseURL: import.meta.env.VITE_API_URL || 'http://localhost:8000' })
+                const response = await api.get(`/analyses`)
+                setHistory(response.data)
+            } catch (err) {
+                console.error(err)
+            } finally {
+                setLoading(false)
+            }
+        }
+        fetchHistory()
+    }, [])
+
     return (
-        <main className="min-h-screen bg-canvas p-[48px]">
-            <h1 className="text-[36px] font-bold mb-[32px]">Analysis History</h1>
-            <p className="text-[16px] text-mute">Recent evaluations will appear here.</p>
+        <main className="min-h-screen bg-canvas p-[48px] max-w-[1280px] mx-auto">
+            <h1 className="text-[36px] font-bold mb-[32px] text-ink">Analysis History</h1>
+            {loading ? (
+                <div className="text-[16px] font-bold">Loading history...</div>
+            ) : history.length === 0 ? (
+                <p className="text-[16px] text-mute">No analyses found. Upload an image to start.</p>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[24px]">
+                    {history.map(item => (
+                        <Link to={`/analyze/${item.id}`} key={item.id} className="block no-underline">
+                            <div className="border border-hairline p-[24px] rounded-sm hover:border-primary transition-colors cursor-pointer bg-surface-soft h-full flex flex-col">
+                                <div className="flex justify-between items-start mb-[16px]">
+                                    <h3 className="text-[16px] font-bold text-ink truncate max-w-[70%]">{item.filename}</h3>
+                                    <span className={`px-[8px] py-[2px] rounded-sm text-[12px] font-bold uppercase text-white ${item.quality_label === 'ACCEPTABLE' ? 'bg-success-deep' : item.quality_label === 'DEGRADED' ? 'bg-warning' : 'bg-error'}`}>
+                                        {item.quality_score.toFixed(0)}
+                                    </span>
+                                </div>
+                                <div className="mt-auto pt-[16px] border-t border-hairline text-[12px] text-mute flex justify-between">
+                                    <span>{new Date(item.analyzed_at).toLocaleDateString()}</span>
+                                    <span>{item.issues?.length || 0} Issues</span>
+                                </div>
+                            </div>
+                        </Link>
+                    ))}
+                </div>
+            )}
         </main>
     )
 }
