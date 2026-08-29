@@ -186,38 +186,38 @@ npm run dev -- --host 0.0.0.0 --port 3000
 <div align="center">
 
 ```mermaid
-graph TB
-    subgraph Frontend["🎨 Frontend (React + Vite)"]
-        UI["User Interface"]
-        Upload["File Upload Handler"]
-        Results["Results Dashboard"]
-        History["History Timeline"]
+flowchart TD
+    subgraph FE[Frontend: React + Vite]
+        UI[User Interface]
+        Upload[File Upload Handler]
+        Results[Results Dashboard]
+        History[History Timeline]
     end
 
-    subgraph Backend["⚙️ Backend (FastAPI)"]
-        Router["API Router Layer"]
-        Service["Analysis Service"]
-        CV["OpenCV Pipeline"]
-        ML["ML Engine (PyTorch)"]
-        DB["SQLite Database"]
+    subgraph BE[Backend: FastAPI]
+        Router[API Router Layer]
+        Service[Analysis Service]
+        CV[OpenCV Pipeline]
+        ML[ML Engine: PyTorch]
+        DB[(SQLite Database)]
     end
 
-    subgraph ML_Layer["🧠 ML Layer"]
-        Model["EfficientNet-B0"]
-        Sigmoid["Sigmoid Activation"]
-        Regression["Float Regression Head"]
+    subgraph MLL[ML Layer: PyTorch]
+        Model[EfficientNet-B0 Backbone]
+        Regression[Float Regression Head]
+        Sigmoid[Sigmoid Activation 0 to 100]
     end
 
-    UI -->|"HTTP POST /analyze"| Router
-    UI -->|"HTTP GET /analyses"| Router
+    UI -->|HTTP POST /analyze| Router
+    UI -->|HTTP GET /analyses| Router
     Router --> Service
     Service --> CV
     Service --> ML
-    CV -->|"Laplacian, Luminance"| Service
-    ML -->|"0.0 - 1.0 Score"| Service
-    Service -->|"Fused Score + Issues"| DB
-    Service -->|"JSON Response"| Router
-    Router -->|"AnalysisResponse"| Results
+    CV -->|Laplacian, Luminance| Service
+    ML -->|0.0 to 1.0 Score| Service
+    Service -->|Fused Score + Issues| DB
+    Service -->|JSON Response| Router
+    Router -->|AnalysisResponse| Results
 
     ML --> Model
     Model --> Regression
