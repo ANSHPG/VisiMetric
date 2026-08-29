@@ -1,0 +1,55 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'NVIDIA-EMEA';
+  src: url('/fonts/NVIDIASansVF_NALA_W_Wght.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'NVIDIA-EMEA';
+  src: url('/fonts/NVIDIASansVF_Wght_NALA_W_Italic.woff2') format('woff2');
+  font-weight: 400 700;
+  font-style: italic;
+}
+
+@font-face {
+  font-family: 'Font Awesome 6 Free';
+  src: url('/fonts/fa-solid-900.woff2') format('woff2');
+  font-weight: 900;
+  font-style: normal;
+}
+
+:root {
+  --color-primary: #76b900;
+  --color-on-primary: #000000;
+  --color-primary-dark: #5a8d00;
+  --color-ink: #000000;
+  --color-canvas: #ffffff;
+  --color-surface-dark: #000000;
+  --color-surface-soft: #f7f7f7;
+  --color-surface-elevated: #1a1a1a;
+  --color-hairline: #cccccc;
+  --color-hairline-strong: #5e5e5e;
+  --color-body: #1a1a1a;
+  --color-mute: #757575;
+  --color-stone: #898989;
+  --color-ash: #a7a7a7;
+  --color-on-dark: #ffffff;
+  --color-on-dark-mute: rgba(255,255,255,0.7);
+  --color-link-blue: #0046a4;
+  --color-error: #e52020;
+  --color-warning: #df6500;
+  --color-success-deep: #3f8500;
+}
+
+body {
+  font-family: 'NVIDIA-EMEA', Arial, Helvetica, sans-serif;
+  background-color: var(--color-canvas);
+  color: var(--color-ink);
+  margin: 0;
+  padding: 0;
+}
