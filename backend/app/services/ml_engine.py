@@ -60,6 +60,11 @@ def predict_quality(features: dict, image_bytes: bytes) -> dict:
             label = "DEGRADED"
             score -= 15
             
+    if not issues and score < 60:
+        issues.append({"type": "complex distortion", "severity": "MEDIUM", "confidence": probabilities[class_idx].item()})
+        if score < 30:
+            issues[0]["severity"] = "HIGH"
+            
     return {
         "quality_score": max(0.0, min(100.0, float(score))),
         "quality_label": label,
