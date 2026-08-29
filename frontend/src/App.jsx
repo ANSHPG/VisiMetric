@@ -49,9 +49,9 @@ function Footer() {
         <div className="border-t border-[#333] pt-[32px] flex items-center justify-between text-[12px]">
           <div className="flex gap-[24px]">
             <span className="text-[#76b900] font-bold">India</span>
-            <span className="hover:text-white cursor-pointer">Privacy Policy</span>
-            <span className="hover:text-white cursor-pointer">Manage My Privacy</span>
-            <span className="hover:text-white cursor-pointer">Legal</span>
+            <Link to="/privacy" className="hover:text-white cursor-pointer no-underline text-[#ccc] transition-colors">Privacy Policy</Link>
+            <Link to="/manage-privacy" className="hover:text-white cursor-pointer no-underline text-[#ccc] transition-colors">Manage My Privacy</Link>
+            <Link to="/legal" className="hover:text-white cursor-pointer no-underline text-[#ccc] transition-colors">Legal</Link>
           </div>
           <div>
             Copyright 2026 VisiMetric Corporation
@@ -181,6 +181,49 @@ function PoliciesPage() {
             
             <h3 className="text-[24px] font-bold text-[#76b900] mb-[16px]">Open Source Commitment</h3>
             <p className="text-gray-300 text-[16px] leading-relaxed">Our PyTorch training algorithms and datasets (KADID-10k and KonIQ-10k mappings) are transparent and available to researchers on our GitHub repository.</p>
+        </div>
+    </main>
+  )
+}
+
+
+function PrivacyPage() {
+  return (
+    <main className="min-h-screen bg-black text-white p-[48px] max-w-[1400px] mx-auto font-sans">
+        <h1 className="text-[48px] font-bold mb-[24px] text-white">Privacy Policy</h1>
+        <div className="bg-[#1a1a1a] p-[48px] border border-[#333] rounded-sm max-w-[1000px]">
+            <h3 className="text-[24px] font-bold text-[#76b900] mb-[16px]">Data Collection & Usage</h3>
+            <p className="text-gray-300 text-[16px] leading-relaxed mb-[32px]">VisiMetric operates on a strict ephemeral-processing model. Images uploaded for quality assessment are processed entirely in-memory via our FastAPI instance. We do not write raw pixel data to disk, and all binaries are destroyed instantly after the PyTorch regression score is calculated.</p>
+            <h3 className="text-[24px] font-bold text-[#76b900] mb-[16px]">Telemetry</h3>
+            <p className="text-gray-300 text-[16px] leading-relaxed">We record non-identifiable telemetry (such as the final float score and OpenCV heuristic flags) to our local SQLite database for historical metric tracking. No identifiable user information is attached to these records.</p>
+        </div>
+    </main>
+  )
+}
+
+function ManagePrivacyPage() {
+  return (
+    <main className="min-h-screen bg-black text-white p-[48px] max-w-[1400px] mx-auto font-sans">
+        <h1 className="text-[48px] font-bold mb-[24px] text-white">Manage My Privacy</h1>
+        <div className="bg-[#1a1a1a] p-[48px] border border-[#333] rounded-sm max-w-[1000px]">
+            <h3 className="text-[24px] font-bold text-[#76b900] mb-[16px]">Cookie Preferences</h3>
+            <p className="text-gray-300 text-[16px] leading-relaxed mb-[32px]">VisiMetric currently utilizes zero tracking cookies. Your session is entirely stateless and does not track you across other domains.</p>
+            <h3 className="text-[24px] font-bold text-[#76b900] mb-[16px]">Data Deletion Requests</h3>
+            <p className="text-gray-300 text-[16px] leading-relaxed">Because we do not store user-identifiable media, there is no personal media to delete from our active servers. If you wish to purge the anonymous telemetry history, you can manually clear the AnalysisResult table on your local deployed database instance.</p>
+        </div>
+    </main>
+  )
+}
+
+function LegalPage() {
+  return (
+    <main className="min-h-screen bg-black text-white p-[48px] max-w-[1400px] mx-auto font-sans">
+        <h1 className="text-[48px] font-bold mb-[24px] text-white">Legal Information</h1>
+        <div className="bg-[#1a1a1a] p-[48px] border border-[#333] rounded-sm max-w-[1000px]">
+            <h3 className="text-[24px] font-bold text-[#76b900] mb-[16px]">Copyright</h3>
+            <p className="text-gray-300 text-[16px] leading-relaxed mb-[32px]">&copy; 2026 VisiMetric Corporation, Developed by Anshuman Pattnaik. All rights reserved. The VisiMetric logo, corporate UI motifs, and AI architecture are proprietary concepts constructed for this deployment.</p>
+            <h3 className="text-[24px] font-bold text-[#76b900] mb-[16px]">Open Source Licenses</h3>
+            <p className="text-gray-300 text-[16px] leading-relaxed">This software utilizes PyTorch, OpenCV, FastAPI, and React. All respective open-source licenses remain intact. The training models utilize the KADID-10k and KonIQ-10k datasets intended strictly for academic and non-commercial assessment.</p>
         </div>
     </main>
   )
@@ -444,6 +487,9 @@ export default function App() {
           <Route path="/products" element={<ProductsPage />} />
           <Route path="/about" element={<AboutPage />} />
           <Route path="/policies" element={<PoliciesPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/manage-privacy" element={<ManagePrivacyPage />} />
+          <Route path="/legal" element={<LegalPage />} />
         </Routes>
       </div>
       <Footer />
