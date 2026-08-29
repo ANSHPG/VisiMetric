@@ -479,3 +479,8 @@ Every npm package is a maintenance liability and a potential supply-chain attack
 **Context:** Application needs to be launched and tested.
 **Decision:** Executed docker compose up --build -d to compile the containers and start the services in detached mode.
 **Rationale:** Validates that the scaffolding successfully assembles into a working full-stack network.
+
+### [2026-08-29 12:07] [D-027] [HOST DOCKER INSTALL] — System-level prerequisites
+**Context:** Sandbox environment lacked the Docker daemon required to run `docker compose`.
+**Decision:** Automated the installation of Docker Engine (`docker-ce`) and the compose plugin via the official installation script, configured user groups, and booted the daemon. 
+**Rationale:** Necessary step to validate the full stack end-to-end as specified in the original internship PDF ("containerization using Docker is strongly preferred").
