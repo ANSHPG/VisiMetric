@@ -204,6 +204,32 @@ npm run dev -- --host 0.0.0.0 --port 3000
 
 ## 🏗️ System Architecture
 
+
+### Architecture Blueprint
+
+<div align="center">
+  <img src="Explain/explain/VisiMetric_Engine_Blueprint_page-0001.jpg" alt="Blueprint Page 1" width="800" />
+<br/>
+  <img src="Explain/explain/VisiMetric_Engine_Blueprint_page-0002.jpg" alt="Blueprint Page 2" width="800" />
+<br/>
+  <img src="Explain/explain/VisiMetric_Engine_Blueprint_page-0003.jpg" alt="Blueprint Page 3" width="800" />
+<br/>
+  <img src="Explain/explain/VisiMetric_Engine_Blueprint_page-0004.jpg" alt="Blueprint Page 4" width="800" />
+<br/>
+  <img src="Explain/explain/VisiMetric_Engine_Blueprint_page-0005.jpg" alt="Blueprint Page 5" width="800" />
+<br/>
+  <img src="Explain/explain/VisiMetric_Engine_Blueprint_page-0006.jpg" alt="Blueprint Page 6" width="800" />
+<br/>
+  <img src="Explain/explain/VisiMetric_Engine_Blueprint_page-0007.jpg" alt="Blueprint Page 7" width="800" />
+<br/>
+  <img src="Explain/explain/VisiMetric_Engine_Blueprint_page-0008.jpg" alt="Blueprint Page 8" width="800" />
+<br/>
+  <img src="Explain/explain/VisiMetric_Engine_Blueprint_page-0009.jpg" alt="Blueprint Page 9" width="800" />
+<br/>
+  <img src="Explain/explain/VisiMetric_Engine_Blueprint_page-0010.jpg" alt="Blueprint Page 10" width="800" />
+<br/>
+</div>
+
 <div align="center">
 
 ```mermaid

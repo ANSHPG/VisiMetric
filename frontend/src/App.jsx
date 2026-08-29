@@ -130,6 +130,24 @@ function SolutionsPage() {
                 </div>
             </div>
         </section>
+
+        <section className="py-[80px] px-[48px] max-w-[1400px] mx-auto border-t border-[#333]">
+            <h2 className="text-[36px] font-bold text-white mb-[48px] text-center">Complete Architecture Blueprint</h2>
+            <div className="flex flex-col gap-[48px] items-center">
+                {[...Array(10)].map((_, i) => {
+                    const num = i + 1;
+                    const paddedNum = num.toString().padStart(2, '0');
+                    return (
+                        <img 
+                            key={num}
+                            src={`/explain/VisiMetric_Engine_Blueprint_page-00${paddedNum}.jpg`} 
+                            alt={`Blueprint Page ${num}`} 
+                            className="w-full max-w-[1000px] h-auto border border-[#333] rounded-sm shadow-lg"
+                        />
+                    );
+                })}
+            </div>
+        </section>
     </main>
   )
 }
