@@ -242,6 +242,205 @@ Scope discipline is not laziness. It is engineering judgment. An assessment subm
 
 ---
 
-*Log maintained by: Senior SWE Architect*  
+*Log maintained by: Anshuman Pattnaik*  
+*Project: VisiMetric*  
+*Repository: https://github.com/ANSHPG/VisiMetric.git*
+
+---
+
+## SESSION 2 — Frontend Architecture & UI Design
+### Date: 2026-08-29
+
+---
+
+### [2026-08-29 11:29] [D-013] [FRONTEND DESIGN] — DESIGN.md read in full before any UI decisions
+
+**Context:**  
+A `DESIGN.md` file exists in the repo root containing a complete NVIDIA Engineering Design System spec — token definitions, component specs, typography, spacing, elevation rules, responsive breakpoints, and explicit do/don't guidelines.
+
+**Decision:**  
+Every single frontend token is pulled directly from `DESIGN.md`. No color, radius, or spacing value is invented. No token is paraphrased. CSS custom properties map 1:1 to the front-matter token names.
+
+**Rationale:**  
+The design system is defined. Deviating from it without a documented reason is not creativity — it is sloppiness. Every project I architect has a rule: if a design spec exists, you follow it or you write a log entry explaining exactly why you deviated. There are zero deviations in this frontend plan.
+
+---
+
+### [2026-08-29 11:30] [D-014] [FONTS] — Local NVIDIA-EMEA variable fonts used, NOT a CDN
+
+**Context:**  
+The `assets/Fonts/` directory contains the actual NVIDIA-EMEA variable font files:
+- `NVIDIASansVF_NALA_W_Wght.woff2` (upright, weight axis)
+- `NVIDIASansVF_Wght_NALA_W_Italic.woff2` (italic)
+- `fa-solid-900.woff2`, `fa-brands-400.woff2`, `fa-sharp-light-300.woff2` (Font Awesome)
+
+**Decision:**  
+Copy all font files to `frontend/public/fonts/`. Declare `@font-face` in `src/index.css` pointing to local paths. Font Awesome icons loaded via CSS `@font-face` from the local woff2, not from a CDN or npm package.
+
+**Rationale:**  
+1. The spec is explicit that NVIDIA-EMEA is proprietary — it cannot be served from Google Fonts or similar.  
+2. Local fonts load faster (no external DNS resolution, no CORS preflight).  
+3. This application is designed for Docker/local deployment without internet access — CDN fonts would break offline. Local fonts are the only correct choice.  
+4. The assessment explicitly says no external AI/vision APIs. While that constraint is for ML, the spirit of "self-contained" applies to font delivery too.
+
+**Fallback stack declared:** `"NVIDIA-EMEA", Arial, Helvetica, sans-serif`
+
+---
+
+### [2026-08-29 11:30] [D-015] [UI ARCHITECTURE] — Four views, SPA, react-router-dom v6
+
+**Context:**  
+The app needs: image upload, analysis result display, history browsing. Could be multi-page (MPA) or single-page (SPA).
+
+**Decision:**  
+**SPA with react-router-dom v6 client-side routing.** Four routes: `/`, `/analyze/:id`, `/history`, `*` (404).
+
+**Rationale:**  
+- Image upload triggers an API call that returns an `id`. Navigating to `/analyze/:id` without a page reload means the loading state is managed in React — no flicker, no double fetch.
+- History filtering (by quality label, by filename search) is better served as client-side state than URL query params — less URL noise, same user experience.
+- The NavBar and Footer are static shell components that should not re-render on route change. SPA with a single shell achieves this cleanly.
+
+**What I am not doing:** Next.js SSR/SSG. The application has no SEO requirement, no pre-renderable static data, and the backend is a FastAPI Docker container — there is no Node.js hosting environment to run Next.js in. The complexity cost is not justified.
+
+---
+
+### [2026-08-29 11:30] [D-016] [RADIUS DISCIPLINE] — Hard lock: border-radius values are none/xs/sm/full only
+
+**Context:**  
+DESIGN.md is explicit: "No element exceeds 2px radius outside of avatar/icon circles." The system is "aggressively angular."
+
+**Decision:**  
+Tailwind config extends `borderRadius` with only four values: `none` (0), `xs` (1px), `sm` (2px), `full` (9999px). The default Tailwind `rounded-md`, `rounded-lg`, `rounded-xl` etc. are not in the extended config.
+
+**This is a hard architectural constraint, not a soft guideline.** Any PR that introduces `rounded-lg` or higher anywhere except an avatar circle is rejected.
+
+**Rationale:**  
+The DESIGN.md explicitly says: "Don't soften the geometry. No pill buttons, no rounded cards, no rounded.lg or higher anywhere except avatars and social icons." This is not a suggestion. Violating this would make the UI look like a generic consumer app template — which is the exact opposite of the engineering-grade aesthetic the design system is built around.
+
+---
+
+### [2026-08-29 11:30] [D-017] [COLOR DISCIPLINE] — primary green (#76b900) used ONLY for CTAs, active states, corner squares, icons
+
+**Context:**  
+DESIGN.md: "Reserve primary for primary CTAs, active states, decorative corner squares, and the NVIDIA wordmark itself. Treat it as a precious resource."
+
+**Decision:**  
+`var(--color-primary)` (#76b900) appears in exactly these contexts:
+1. `button-primary` background
+2. Active nav link underline
+3. `corner-square` decorative ornament
+4. Focus ring on interactive elements
+5. Eyebrow caption text (e.g. "UPLOAD & ANALYZE" in `caption-md`)
+6. Feature icons on `feature-card`
+7. Score fill color (when score ≥ 70)
+8. Wordmark "VisiMetric" in the NavBar
+
+Nowhere else. It is NOT used as a general highlight color, NOT used as a badge background (badge backgrounds use `surface-soft` or semantic colors), NOT used for informational text.
+
+**Rejected:** Using green as a general "good" color throughout the UI. The system already has `success-deep` (#3f8500) for that semantic role — it is a darker, less saturated green that does not compete with the brand accent.
+
+---
+
+### [2026-08-29 11:31] [D-018] [CHARTS] — Recharts for feature importance bar chart only; no pie charts
+
+**Context:**  
+The analysis result needs to visualise RF feature importances and potentially the quality score as a gauge.
+
+**Decision:**  
+- **Feature importance:** Recharts `<BarChart layout="vertical">` — horizontal bars only.
+- **Quality score:** CSS progress bar + large numeric display (`callout-stat` component). No gauge/donut chart.
+- **Issue confidence:** CSS inline bar (4px tall, `var(--color-primary)` fill).
+
+**Rejected:**
+- Pie charts / donut charts — they are worse at communicating magnitude differences than bar charts (Tufte). There is also no comparative breakdown in the data that would justify a pie.
+- D3 directly — Recharts wraps D3 at exactly the level of abstraction needed here. Writing D3 from scratch for horizontal bars is unnecessary code.
+- Chart.js — larger bundle than Recharts for the same functionality.
+
+---
+
+### [2026-08-29 11:31] [D-019] [ELEVATION] — No box-shadow on cards. Hairline borders only.
+
+**Context:**  
+DESIGN.md: "NVIDIA's system has effectively no drop-shadow elevation in card or content surfaces. The only 'shadow' in the extracted tokens is a subtle 5px ambient on sticky chrome bars."
+
+**Decision:**  
+- All cards: `border: 1px solid var(--color-hairline)` (#cccccc). No `box-shadow`.
+- Sticky NavBar on scroll: `box-shadow: var(--shadow-sticky)` — `0 0 5px 0 rgba(0,0,0,0.3)`. This is the only shadow in the entire application.
+- DropZone drag-over state: border changes from `2px dashed var(--color-hairline)` to `2px dashed var(--color-primary)`. No shadow added.
+
+**This constraint eliminates an entire class of "make it pop" design mistakes.** Depth comes from alternating surface colors (black hero, white body) and the corner-square ornament — not from elevation simulation.
+
+---
+
+### [2026-08-29 11:32] [D-020] [ISSUE SEVERITY COLOURS] — Semantic colors from DESIGN.md, not invented
+
+**Context:**  
+IssueCards need to communicate LOW / MEDIUM / HIGH severity. Need to pick background and text colors.
+
+**Decision:**
+
+| Severity | Background | Text |
+|---|---|---|
+| LOW | `var(--color-surface-soft)` (#f7f7f7) | `var(--color-body)` (#1a1a1a) |
+| MEDIUM | `var(--color-accent-yellow-pale)` (#feeeb2) | `var(--color-warning)` (#df6500) |
+| HIGH | `#ffd4d4` (error pale, arithmetically derived from #e52020 at 20% opacity on white) | `var(--color-error)` (#e52020) |
+
+**Rationale:**  
+LOW is intentionally neutral — it should not alarm. `surface-soft` is the system's "least emphasis" surface.  
+MEDIUM uses the yellow-pale accent — DESIGN.md lists `accent-yellow-pale` (#feeeb2) as a "documentation tip / soft callout fill", which maps semantically to a caution without being alarming.  
+HIGH uses an error-pale background. DESIGN.md does not define `error-pale` explicitly, so I derive it arithmetically: `#e52020` at 20% alpha on white → `#fbd4d4`. This is the only token derivation in the entire system, and it is documented here.
+
+---
+
+### [2026-08-29 11:32] [D-021] [STATE MANAGEMENT] — useState + useEffect, no Redux or Zustand
+
+**Context:**  
+Three pages, simple linear data flow: upload → result → history.
+
+**Decision:**  
+No external state management library. `useState` and `useEffect` per page, API calls in `src/services/api.js`, Axios.
+
+**Rationale:**  
+Redux is justified when: (a) multiple unrelated components need access to the same state, (b) state transitions are complex enough to benefit from explicit action/reducer patterns, or (c) the team is large enough that implicit prop-drilling creates coordination problems. None of these apply here. The entire application has three routes and a linear user journey. Adding Redux would be cargo-cult architecture — adding complexity because it feels "proper", not because the data flow demands it.
+
+**Future trigger for revisiting:** If we add user authentication (JWT state shared across NavBar + protected routes) or real-time analysis progress via WebSocket, then a context or Zustand store would be justified. Not today.
+
+---
+
+### [2026-08-29 11:32] [D-022] [PACKAGE SELECTION] — Minimal, justified dependency list
+
+**Context:**  
+Every npm package is a maintenance liability and a potential supply-chain attack vector.
+
+**Approved packages:**
+
+| Package | Justification |
+|---|---|
+| react, react-dom | Framework |
+| react-router-dom v6 | Client routing |
+| axios | HTTP client with interceptors (simpler error handling than fetch) |
+| recharts | Feature importance chart — one chart type needed |
+| date-fns | Relative timestamps — tree-shakeable, no Moment.js bloat |
+| clsx | Conditional class merging — 0.5KB, saves string template noise |
+| tailwindcss | Design token compilation to utility classes |
+
+**Rejected packages:**
+
+| Package | Reason |
+|---|---|
+| @fortawesome/react-fontawesome | Not needed — FA icons loaded via CSS @font-face from local woff2 |
+| framer-motion | Animation overkill for this scope |
+| react-query / SWR | Justified only when caching API responses across components — not needed here |
+| zustand / redux | See D-021 |
+| dayjs | date-fns is already tree-shakeable; two date libraries is irrational |
+| chart.js | Recharts is already chosen; two charting libraries is irrational |
+
+---
+
+*End of Session 2*
+
+---
+
+*Log maintained by: Anshuman Pattnaik*  
 *Project: VisiMetric*  
 *Repository: https://github.com/ANSHPG/VisiMetric.git*
