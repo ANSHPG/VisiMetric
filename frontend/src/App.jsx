@@ -1,10 +1,22 @@
 import React, { useRef, useState, useEffect } from 'react'
-import { Routes, Route, useNavigate, useParams, Link } from 'react-router-dom'
+import { Routes, Route, useNavigate, useParams, Link, useLocation } from 'react-router-dom'
 import { uploadImage } from './services/api'
 import axios from 'axios'
 import LegacyHomePage from './LegacyHomePage'
 
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
+
 function NavBar() {
+
   return (
     <nav className="sticky top-0 z-50 h-[64px] bg-[#76b900] text-black flex items-center justify-between px-[48px] shadow-sm">
       <Link to="/" className="font-nvidia font-bold text-[24px] text-black no-underline tracking-wide hover:opacity-80 transition-opacity">VISIMETRIC</Link>
@@ -52,25 +64,72 @@ function Footer() {
 
 function SolutionsPage() {
   return (
-    <main className="min-h-screen bg-black text-white p-[48px] max-w-[1400px] mx-auto font-sans">
-        <h1 className="text-[48px] font-bold mb-[24px] text-white">VisiMetric Solutions</h1>
-        <p className="text-[18px] text-gray-400 mb-[48px] max-w-[800px]">
-          Discover how VisiMetric provides enterprise-grade AI image diagnostics across multiple industries.
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-[32px]">
-            <div className="bg-[#1a1a1a] p-[40px] border border-[#333] rounded-sm hover:border-[#76b900] transition-colors cursor-pointer">
-                <h3 className="text-[24px] font-bold text-[#76b900] mb-[16px]">Healthcare Imaging</h3>
-                <p className="text-gray-400 leading-relaxed">Ensure automated visual quality checks on X-ray and MRI outputs before they reach diagnosticians. VisiMetric removes blurs and exposure artifacts from your pipeline instantly.</p>
+    <main className="min-h-screen bg-black text-white font-sans">
+        <section className="py-[80px] px-[48px] max-w-[1400px] mx-auto border-b border-[#333]">
+            <h1 className="text-[56px] font-bold mb-[24px] text-white">VisiMetric Architecture & Solutions</h1>
+            <p className="text-[20px] text-gray-400 max-w-[800px] leading-relaxed">
+              Explore the underlying dual-engine pipeline and see how VisiMetric provides enterprise-grade AI image diagnostics across multiple industries.
+            </p>
+        </section>
+
+        <section className="py-[80px] px-[48px] max-w-[1400px] mx-auto border-b border-[#333]">
+            <h2 className="text-[36px] font-bold text-white mb-[48px]">The Dual-Engine Pipeline</h2>
+            <div className="flex flex-col lg:flex-row gap-[64px] items-center">
+                <div className="flex-1 space-y-[32px]">
+                    <div className="flex gap-[24px]">
+                        <div className="w-[48px] h-[48px] rounded-full bg-[#76b900] flex items-center justify-center text-black font-bold text-[24px] shrink-0">1</div>
+                        <div>
+                            <h3 className="text-[24px] font-bold text-white mb-[8px]">OpenCV Heuristic Extraction</h3>
+                            <p className="text-gray-400 text-[16px] leading-relaxed">Incoming images are first passed through deterministic OpenCV filters to extract Laplacian variance (blur) and mean luminance (exposure). This acts as a rapid frontline diagnostic pass.</p>
+                        </div>
+                    </div>
+                    <div className="flex gap-[24px]">
+                        <div className="w-[48px] h-[48px] rounded-full bg-[#76b900] flex items-center justify-center text-black font-bold text-[24px] shrink-0">2</div>
+                        <div>
+                            <h3 className="text-[24px] font-bold text-white mb-[8px]">PyTorch Float Regression</h3>
+                            <p className="text-gray-400 text-[16px] leading-relaxed">The image is tensorized and fed into a fine-tuned EfficientNet-B0 neural network. The classification head is replaced with a Continuous Float Regression node, bounded by Sigmoid activations, to predict a highly accurate base score.</p>
+                        </div>
+                    </div>
+                    <div className="flex gap-[24px]">
+                        <div className="w-[48px] h-[48px] rounded-full bg-[#76b900] flex items-center justify-center text-black font-bold text-[24px] shrink-0">3</div>
+                        <div>
+                            <h3 className="text-[24px] font-bold text-white mb-[8px]">Dynamic Score Fusion</h3>
+                            <p className="text-gray-400 text-[16px] leading-relaxed">The API merges the AI deep structural analysis with the OpenCV feature penalties, emitting a final 0-100 float score along with categorized metadata issues.</p>
+                        </div>
+                    </div>
+                </div>
+                <div className="flex-1 w-full">
+                    <img src="https://images.unsplash.com/photo-1555949963-ff9fe0c870eb?q=80&w=800&auto=format&fit=crop" className="w-full h-auto rounded-sm border border-[#333]" alt="Pipeline Flow" />
+                </div>
             </div>
-            <div className="bg-[#1a1a1a] p-[40px] border border-[#333] rounded-sm hover:border-[#76b900] transition-colors cursor-pointer">
-                <h3 className="text-[24px] font-bold text-[#76b900] mb-[16px]">E-Commerce Moderation</h3>
-                <p className="text-gray-400 leading-relaxed">Automatically reject poorly lit, heavily distorted, or heavily compressed merchant uploads to maintain a pristine, high-conversion storefront.</p>
+        </section>
+
+        <section className="py-[80px] px-[48px] max-w-[1400px] mx-auto">
+            <h2 className="text-[36px] font-bold text-white mb-[48px]">Industry Applications</h2>
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-[32px]">
+                <div className="bg-[#1a1a1a] border border-[#333] rounded-sm hover:border-[#76b900] transition-colors overflow-hidden flex flex-col">
+                    <img src="https://images.unsplash.com/photo-1516549655169-df83a0774514?q=80&w=600&auto=format&fit=crop" alt="Healthcare" className="w-full h-[200px] object-cover" />
+                    <div className="p-[32px] flex-1">
+                        <h3 className="text-[24px] font-bold text-[#76b900] mb-[16px]">Healthcare Imaging</h3>
+                        <p className="text-gray-400 leading-relaxed">Ensure automated visual quality checks on X-ray and MRI outputs before they reach diagnosticians. VisiMetric removes blurs and exposure artifacts from your pipeline instantly.</p>
+                    </div>
+                </div>
+                <div className="bg-[#1a1a1a] border border-[#333] rounded-sm hover:border-[#76b900] transition-colors overflow-hidden flex flex-col">
+                    <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?q=80&w=600&auto=format&fit=crop" alt="E-Commerce" className="w-full h-[200px] object-cover" />
+                    <div className="p-[32px] flex-1">
+                        <h3 className="text-[24px] font-bold text-[#76b900] mb-[16px]">E-Commerce Moderation</h3>
+                        <p className="text-gray-400 leading-relaxed">Automatically reject poorly lit, heavily distorted, or heavily compressed merchant uploads to maintain a pristine, high-conversion storefront.</p>
+                    </div>
+                </div>
+                <div className="bg-[#1a1a1a] border border-[#333] rounded-sm hover:border-[#76b900] transition-colors overflow-hidden flex flex-col">
+                    <img src="https://images.unsplash.com/photo-1549317661-bd32c8ce0db2?q=80&w=600&auto=format&fit=crop" alt="Autonomous Vehicles" className="w-full h-[200px] object-cover" />
+                    <div className="p-[32px] flex-1">
+                        <h3 className="text-[24px] font-bold text-[#76b900] mb-[16px]">Autonomous Vehicles</h3>
+                        <p className="text-gray-400 leading-relaxed">Filter degraded telemetry camera feeds in real-time. If a camera lens becomes occluded or severely noisy, the system seamlessly triggers fallback safety logic.</p>
+                    </div>
+                </div>
             </div>
-            <div className="bg-[#1a1a1a] p-[40px] border border-[#333] rounded-sm hover:border-[#76b900] transition-colors cursor-pointer">
-                <h3 className="text-[24px] font-bold text-[#76b900] mb-[16px]">Autonomous Vehicles</h3>
-                <p className="text-gray-400 leading-relaxed">Filter degraded telemetry camera feeds in real-time. If a camera lens becomes occluded or severely noisy, the system seamlessly triggers fallback safety logic.</p>
-            </div>
-        </div>
+        </section>
     </main>
   )
 }
@@ -171,8 +230,11 @@ function NVIDIAHomePage() {
             <span className="text-[#76b900]">AI-POWERED</span> <br/>
             QUALITY ASSESSMENT
           </h1>
-          <p className="text-[24px] text-gray-300 mb-[40px] max-w-[600px] font-light">
+          <p className="text-[24px] text-gray-300 mb-[16px] max-w-[600px] font-light">
             VisiMetric delivers enterprise-grade image analysis, detecting complex distortions instantly.
+          </p>
+          <p className="text-[20px] text-[#76b900] font-bold mb-[40px] uppercase tracking-widest">
+            Developed by Anshuman Pattnaik
           </p>
           <button 
             onClick={() => document.getElementById('upload-section').scrollIntoView({ behavior: 'smooth' })}
@@ -370,6 +432,7 @@ function HistoryPage() {
 export default function App() {
   return (
     <div className="min-h-screen flex flex-col bg-black">
+      <ScrollToTop />
       <NavBar />
       <div className="flex-grow">
         <Routes>
