@@ -44,7 +44,7 @@ def train_model():
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ])
     
-    dataset = KADIDDataset(csv_file='kadid10k/image_labeled_by_per_noise.csv', img_dir='kadid10k/images/', transform=transform)
+    dataset = KADIDDataset(csv_file=os.path.join(os.path.dirname(__file__), 'kadid10k/image_labeled_by_per_noise.csv'), img_dir=os.path.join(os.path.dirname(__file__), 'kadid10k/images/'), transform=transform)
     subset_indices = list(range(1000))
     subset_dataset = Subset(dataset, subset_indices)
     dataloader = DataLoader(subset_dataset, batch_size=32, shuffle=True)
@@ -73,8 +73,8 @@ def train_model():
                 
         print(f"Epoch {epoch+1}/{epochs} Loss: {running_loss/len(dataloader):.4f}")
         
-    os.makedirs('models', exist_ok=True)
-    torch.save(model.state_dict(), 'models/efficientnet_b0_v1.pth')
+    os.makedirs(os.path.join(os.path.dirname(__file__), 'models'), exist_ok=True)
+    torch.save(model.state_dict(), os.path.join(os.path.dirname(__file__), 'models/efficientnet_b0_v1.pth'))
     print("Training complete. Model saved to models/efficientnet_b0_v1.pth")
 
 if __name__ == '__main__':
