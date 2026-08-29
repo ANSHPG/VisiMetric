@@ -484,3 +484,13 @@ Every npm package is a maintenance liability and a potential supply-chain attack
 **Context:** Sandbox environment lacked the Docker daemon required to run `docker compose`.
 **Decision:** Automated the installation of Docker Engine (`docker-ce`) and the compose plugin via the official installation script, configured user groups, and booted the daemon. 
 **Rationale:** Necessary step to validate the full stack end-to-end as specified in the original internship PDF ("containerization using Docker is strongly preferred").
+
+### D-028: Multi-Dataset Training Integration (KADID + KonIQ)
+**Time:** 2026-08-29 15:10
+**Decision:** Integrated KonIQ-10k into the PyTorch training pipeline (`train.py`) alongside KADID-10k using `torch.utils.data.ConcatDataset`.
+**Rationale:** Relying solely on KADID-10k restricts the AI to artificial/synthetic noise profiles. By adding KonIQ-10k (which features authentic, real-world photographic degradation and lighting issues), the AI generalizes far better to real-world user uploads. The label scaling was aligned: KonIQ's MOS (0-100) maps directly to the Acceptable/Degraded/Defective classes.
+
+### D-029: Project Context Documentation
+**Time:** 2026-08-29 15:11
+**Decision:** Created a `PROJECT_CONTEXT.md` file summarizing the repository structure.
+**Rationale:** To assist reviewers and future maintainers in navigating the two-tier architecture (FastAPI / React) and the decoupled ML training pipeline versus ML inference engine.

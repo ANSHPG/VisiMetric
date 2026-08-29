@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from torch.utils.data import Dataset, DataLoader, Subset
+from torch.utils.data import Dataset, DataLoader, ConcatDataset
 import torchvision.transforms as transforms
 from torchvision.models import efficientnet_b0, EfficientNet_B0_Weights
 import pandas as pd
@@ -21,39 +21,68 @@ class KADIDDataset(Dataset):
         img_name = os.path.join(self.img_dir, self.data.iloc[idx, 0])
         image = Image.open(img_name).convert('RGB')
         dmos = float(self.data.iloc[idx, 1])
-        
         if dmos >= 3.5:
             label = 0
         elif dmos >= 2.0:
             label = 1
         else:
             label = 2
-            
         if self.transform:
             image = self.transform(image)
-            
+        return image, label
+
+class KonIQDataset(Dataset):
+    def __init__(self, csv_file, img_dir, transform=None):
+        self.data = pd.read_csv(csv_file)
+        self.img_dir = img_dir
+        self.transform = transform
+
+    def __len__(self):
+        return len(self.data)
+
+    def __getitem__(self, idx):
+        img_name = os.path.join(self.img_dir, self.data.iloc[idx, 0])
+        image = Image.open(img_name).convert('RGB')
+        mos = float(self.data.iloc[idx, 7])
+        if mos >= 65.0:
+            label = 0
+        elif mos >= 40.0:
+            label = 1
+        else:
+            label = 2
+        if self.transform:
+            image = self.transform(image)
         return image, label
 
 def train_model():
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     print(f"Using device: {device}")
-    
     transform = transforms.Compose([
         transforms.Resize((224, 224)),
         transforms.ToTensor(),
         transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
     ])
-    
-    dataset = KADIDDataset(csv_file=os.path.join(os.path.dirname(__file__), 'kadid10k/image_labeled_by_per_noise.csv'), img_dir=os.path.join(os.path.dirname(__file__), 'kadid10k/images/'), transform=transform)
-    dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
-        
+    base_dir = os.path.dirname(__file__)
+    datasets = []
+    kadid_csv = os.path.join(base_dir, 'kadid10k/image_labeled_by_per_noise.csv')
+    kadid_img = os.path.join(base_dir, 'kadid10k/images/')
+    if os.path.exists(kadid_csv):
+        datasets.append(KADIDDataset(csv_file=kadid_csv, img_dir=kadid_img, transform=transform))
+    koniq_csv = os.path.join(base_dir, 'KonIQ-10k/koniq10k_distributions_sets.csv')
+    koniq_img = os.path.join(base_dir, 'KonIQ-10k/512x384/')
+    if os.path.exists(koniq_csv):
+        datasets.append(KonIQDataset(csv_file=koniq_csv, img_dir=koniq_img, transform=transform))
+    if not datasets:
+        print("No datasets found.")
+        return
+    combined_dataset = ConcatDataset(datasets)
+    dataloader = DataLoader(combined_dataset, batch_size=32, shuffle=True)
+    print(f"Total training images: {len(combined_dataset)}")
     model = efficientnet_b0(weights=EfficientNet_B0_Weights.DEFAULT)
     model.classifier[1] = nn.Linear(model.classifier[1].in_features, 3)
     model = model.to(device)
-    
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
-    
     epochs = 5
     for epoch in range(epochs):
         model.train()
@@ -68,12 +97,12 @@ def train_model():
             running_loss += loss.item()
             if i % 10 == 0:
                 print(f"Batch {i}/{len(dataloader)} Loss: {loss.item():.4f}")
-                
         print(f"Epoch {epoch+1}/{epochs} Loss: {running_loss/len(dataloader):.4f}")
-        
-    os.makedirs(os.path.join(os.path.dirname(__file__), 'models'), exist_ok=True)
-    torch.save(model.state_dict(), os.path.join(os.path.dirname(__file__), 'models/efficientnet_b0_v1.pth'))
-    print("Training complete. Model saved to models/efficientnet_b0_v1.pth")
+    models_dir = os.path.join(base_dir, 'models')
+    os.makedirs(models_dir, exist_ok=True)
+    save_path = os.path.join(models_dir, 'efficientnet_b0_v1.pth')
+    torch.save(model.state_dict(), save_path)
+    print(f"Model saved to {save_path}")
 
 if __name__ == '__main__':
     train_model()
