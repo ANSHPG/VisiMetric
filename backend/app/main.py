@@ -22,3 +22,9 @@ app.add_middleware(
 
 app.include_router(health.router)
 app.include_router(analysis.router)
+import os
+from fastapi.staticfiles import StaticFiles
+
+static_dir = os.path.join(os.path.dirname(__file__), "../static")
+if os.path.exists(static_dir):
+    app.mount("/", StaticFiles(directory=static_dir, html=True), name="static")

@@ -509,3 +509,8 @@ Every npm package is a maintenance liability and a potential supply-chain attack
 **Time:** 2026-08-29 18:28
 **Decision:** Stripped non-essential external links from the footer (Developers, News, Support) to streamline the corporate presentation. Scaffolded and deployed full pages for `/solutions`, `/products`, `/about`, and `/policies` to ensure the application functions as a cohesive corporate domain. Inverted the NavBar background from black to `#76b900` (NVIDIA green) for enhanced visual weight.
 **Rationale:** Prevents dead links in the presentation layout, fulfills user requirement for a complete "Solutions" page, and unifies the top-level navigation with the primary brand color.
+
+### D-033: Docker Containerization & GitHub Container Registry Publishing
+**Time:** 2026-08-29 19:18
+**Decision:** Constructed a unified multi-stage production Dockerfile and automated GitHub Actions workflow (`.github/workflows/docker-publish.yml`) to automatically build and publish Docker container images to GitHub Container Registry (`ghcr.io`). Updated `docker-compose.yml` for multi-service orchestration. Added SPA static asset mounting in FastAPI when built fullstack image is run.
+**Rationale:** Fulfills assessment requirements for containerization and automated publishing to GitHub Container Registry, enabling zero-config deployment on any Docker host with a single command.

@@ -4,3 +4,9 @@ __pycache__/
 *.db
 .env
 .DS_Store
+kadid10k/
+KonIQ-10k/
+*.zip
+sample_images/
+backend/ml/kadid10k/
+backend/ml/KonIQ-10k/

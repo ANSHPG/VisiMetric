@@ -158,6 +158,27 @@ Navigate to **[http://localhost:3000](http://localhost:3000)** in your browser.
 > [!TIP]
 > The backend API documentation (Swagger UI) is automatically available at **[http://localhost:8000/docs](http://localhost:8000/docs)** for direct API testing.
 
+### Docker Startup (Containerized)
+
+**Run with Docker Compose:**
+```bash
+docker compose up --build
+```
+This builds and boots both the FastAPI backend on port 8000 and the Vite frontend on port 3000.
+
+**Run Unified Production Container:**
+```bash
+docker build -t visimetric:latest .
+docker run -p 8000:8000 visimetric:latest
+```
+Access the complete application and API at `http://localhost:8000`.
+
+**Pull from GitHub Container Registry:**
+```bash
+docker pull ghcr.io/anshumanpattnaik/visimetric:latest
+docker run -p 8000:8000 ghcr.io/anshumanpattnaik/visimetric:latest
+```
+
 ### Manual Startup (Alternative)
 
 If you prefer to run the servers independently in separate terminals:
