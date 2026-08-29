@@ -66,15 +66,22 @@ def train_model():
     if not datasets:
         print("No datasets found.")
         return
-    combined_dataset = ConcatDataset(datasets)
+    from torch.utils.data import Subset
+    
+    # Take a small subset from each dataset for rapid convergence demo
+    sub_datasets = []
+    for d in datasets:
+        sub_datasets.append(Subset(d, list(range(250))))
+        
+    combined_dataset = ConcatDataset(sub_datasets)
     dataloader = DataLoader(combined_dataset, batch_size=32, shuffle=True)
-    print(f"Total training images: {len(combined_dataset)}")
+    print(f"Total training images (FAST DEMO MODE): {len(combined_dataset)}")
     model = efficientnet_b0(weights=EfficientNet_B0_Weights.DEFAULT)
     model.classifier[1] = nn.Linear(model.classifier[1].in_features, 1)
     model = model.to(device)
     criterion = nn.MSELoss()
     optimizer = optim.Adam(model.parameters(), lr=0.001)
-    epochs = 5
+    epochs = 1
     for epoch in range(epochs):
         model.train()
         running_loss = 0.0
