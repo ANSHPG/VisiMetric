@@ -444,3 +444,21 @@ Every npm package is a maintenance liability and a potential supply-chain attack
 *Log maintained by: Anshuman Pattnaik*  
 *Project: VisiMetric*  
 *Repository: https://github.com/ANSHPG/VisiMetric.git*
+
+
+---
+
+## SESSION 3 — Implementation Kickoff
+### Date: 2026-08-29
+
+---
+
+### [2026-08-29 11:42] [D-023] [API KEYS] — Zero External Dependencies
+**Context:** The spec strictly prohibits external APIs.
+**Decision:** The entire application (CV pipeline, EfficientNet-B0 inference, Random Forest, Grad-CAM) will run 100% locally on the host machine/container. No OpenAI, no cloud vision APIs, no external telemetry.
+**Rationale:** Adhering perfectly to the assessment constraints. The PyTorch models (EfficientNet-B0 weights) will be downloaded during the initial build or training phase and cached locally for inference.
+
+### [2026-08-29 11:45] [D-024] [MONOREPO STRUCTURE] — Unified Repository
+**Context:** Full-stack app requires frontend, backend, and ML training code.
+**Decision:** Scaffolded a monorepo with `frontend/`, `backend/`, `sample_images/`, and root-level Docker config.
+**Rationale:** Simplifies submission for the internship assessment. The reviewer only needs to clone one repo and run `docker compose up --build`.
