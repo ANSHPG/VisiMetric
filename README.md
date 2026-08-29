@@ -21,7 +21,7 @@
 
 **Developed by [Anshuman Pattnaik](https://github.com/ANSHPG)**
 
-*A dual-engine image quality diagnostic system that fuses deterministic computer vision heuristics with deep neural network regression to deliver enterprise-grade, continuous 0–100 quality scores — entirely offline, with zero external AI API dependencies.*
+*A dual-engine image quality diagnostic system that fuses deterministic computer vision heuristics with deep neural network regression to deliver enterprise-grade, continuous 0 to 100 quality scores (entirely offline, with zero external AI API dependencies).*
 
 <br/>
 
@@ -29,7 +29,6 @@
 
 </div>
 
----
 
 <br/>
 
@@ -52,13 +51,12 @@
 - [🛣️ Roadmap](#️-roadmap)
 - [📄 License](#-license)
 
----
 
 <br/>
 
 ## 🎯 Motivation & Problem Statement
 
-In today's digital ecosystem, billions of images are captured, transferred, and processed daily — across healthcare imaging pipelines, autonomous vehicle telemetry, e-commerce product catalogs, and social media platforms. A significant percentage of these images suffer from invisible-to-the-naked-eye quality degradation:
+In today's digital ecosystem, billions of images are captured, transferred, and processed daily across healthcare imaging pipelines, autonomous vehicle telemetry, e-commerce product catalogs, and social media platforms. A significant percentage of these images suffer from invisible-to-the-naked-eye quality degradation:
 
 | Degradation Type | Real-World Impact |
 |:---|:---|
@@ -68,11 +66,10 @@ In today's digital ecosystem, billions of images are captured, transferred, and 
 | **Complex Noise** | Corrupted satellite imagery, unusable surveillance footage |
 
 > [!IMPORTANT]
-> **The core constraint:** VisiMetric was designed under strict academic assessment guidelines that **prohibit the use of any external AI services or API keys**. Every computation — from OpenCV feature extraction to PyTorch neural network inference — runs entirely on the local machine. No data ever leaves your system.
+> **The core constraint:** VisiMetric was designed under strict academic assessment guidelines that **prohibit the use of any external AI services or API keys**. Every computation, from OpenCV feature extraction to PyTorch neural network inference, runs entirely on the local machine. No data ever leaves your system.
 
-Traditional solutions either rely on simple threshold-based checks (which miss complex, multi-factor degradation) or require expensive cloud-based AI APIs (which violate data privacy and offline requirements). VisiMetric bridges this gap with a **dual-engine architecture** that combines the speed of deterministic computer vision with the intelligence of deep learning — all running locally.
+Traditional solutions either rely on simple threshold-based checks (which miss complex, multi-factor degradation) or require expensive cloud-based AI APIs (which violate data privacy and offline requirements). VisiMetric bridges this gap with a **dual-engine architecture** that combines the speed of deterministic computer vision with the intelligence of deep learning, all running locally.
 
----
 
 <br/>
 
@@ -111,7 +108,6 @@ Traditional solutions either rely on simple threshold-based checks (which miss c
 | 🎨 **Professional UI** | A React + TailwindCSS frontend styled after enterprise corporate design standards. |
 | 🔧 **One-Command Startup** | A single `./start.sh` script boots both the backend API server and the frontend dev server simultaneously. |
 
----
 
 <br/>
 
@@ -166,7 +162,7 @@ Navigate to **[http://localhost:3000](http://localhost:3000)** in your browser.
 
 If you prefer to run the servers independently in separate terminals:
 
-**Terminal 1 — Backend:**
+**Terminal 1 (Backend):**
 ```bash
 cd backend
 python3 -m venv venv
@@ -175,14 +171,13 @@ pip install -r requirements.txt
 uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 
-**Terminal 2 — Frontend:**
+**Terminal 2 (Frontend):**
 ```bash
 cd frontend
 npm install
 npm run dev -- --host 0.0.0.0 --port 3000
 ```
 
----
 
 <br/>
 
@@ -192,18 +187,18 @@ npm run dev -- --host 0.0.0.0 --port 3000
 
 ```mermaid
 graph TB
-    subgraph Frontend["🎨 Frontend - React + Vite"]
+    subgraph Frontend["🎨 Frontend (React + Vite)"]
         UI["User Interface"]
         Upload["File Upload Handler"]
         Results["Results Dashboard"]
         History["History Timeline"]
     end
 
-    subgraph Backend["⚙️ Backend - FastAPI"]
+    subgraph Backend["⚙️ Backend (FastAPI)"]
         Router["API Router Layer"]
         Service["Analysis Service"]
         CV["OpenCV Pipeline"]
-        ML["ML Engine - PyTorch"]
+        ML["ML Engine (PyTorch)"]
         DB["SQLite Database"]
     end
 
@@ -238,11 +233,10 @@ graph TB
 | **Presentation Layer** | React 18, TailwindCSS, Vite | Renders the UI, handles file uploads, displays scores and issues, manages client-side routing |
 | **API Gateway** | FastAPI, Uvicorn | Exposes RESTful endpoints, validates input (image MIME type), serializes responses via Pydantic schemas |
 | **Business Logic** | Python Services | Orchestrates the dual-engine analysis: calls OpenCV first, then PyTorch, fuses results, persists to database |
-| **Computer Vision** | OpenCV (cv2) | Deterministic heuristic extraction — Laplacian variance for blur, mean luminance for exposure |
-| **Deep Learning** | PyTorch, EfficientNet-B0 | Continuous float regression bounded by Sigmoid — learns complex, multi-factor degradation patterns from 20,000+ images |
+| **Computer Vision** | OpenCV (cv2) | Deterministic heuristic extraction: Laplacian variance for blur, mean luminance for exposure |
+| **Deep Learning** | PyTorch, EfficientNet-B0 | Continuous float regression bounded by Sigmoid, learning complex, multi-factor degradation patterns from 20,000+ images |
 | **Persistence** | SQLAlchemy + aiosqlite | Async ORM mapping to a local SQLite file (`visimetric.db`) for zero-config storage |
 
----
 
 <br/>
 
@@ -272,8 +266,8 @@ The model is jointly trained on two world-class Image Quality Assessment (IQA) d
 
 | Dataset | Images | Score Range | Normalization Formula |
 |:---|:---:|:---|:---|
-| **KADID-10k** | 10,125 | DMOS 1.0 – 5.0 | `(DMOS - 1.0) / 4.0` → [0.0, 1.0] |
-| **KonIQ-10k** | 10,073 | MOS 0.0 – 100.0 | `MOS / 100.0` → [0.0, 1.0] |
+| **KADID-10k** | 10,125 | DMOS 1.0 to 5.0 | `(DMOS - 1.0) / 4.0` → [0.0, 1.0] |
+| **KonIQ-10k** | 10,073 | MOS 0.0 to 100.0 | `MOS / 100.0` → [0.0, 1.0] |
 | **Combined** | **20,198** | Unified [0.0, 1.0] | Direct regression target |
 
 Both datasets are loaded via custom PyTorch `Dataset` classes (`KADIDDataset` and `KonIQDataset`), concatenated using `ConcatDataset`, and shuffled into a single unified `DataLoader`.
@@ -312,7 +306,6 @@ To train on custom datasets, create a new PyTorch `Dataset` class in `backend/ml
 2. Returns a normalized quality score in the `[0.0, 1.0]` range
 3. Appends it to the `datasets` list before `ConcatDataset`
 
----
 
 <br/>
 
@@ -346,7 +339,6 @@ Input Image (raw bytes)
 > [!TIP]
 > The OpenCV pipeline completes in under **50 milliseconds** on any modern CPU, making it ideal for the frontline diagnostic pass.
 
----
 
 <br/>
 
@@ -379,9 +371,8 @@ The final quality score is not simply the raw neural network output. VisiMetric 
 
 ### Complex Distortion Fallback
 
-If the PyTorch model produces a low base score (< 60) but the OpenCV pipeline detects no specific blur or exposure issues, VisiMetric intelligently flags it as a **"Complex Distortion"** — meaning the neural network detected a degradation pattern (compression artifacts, color shifts, etc.) that simple heuristics cannot identify.
+If the PyTorch model produces a low base score (< 60) but the OpenCV pipeline detects no specific blur or exposure issues, VisiMetric intelligently flags it as a **"Complex Distortion"**, meaning the neural network detected a degradation pattern (compression artifacts, color shifts, etc.) that simple heuristics cannot identify.
 
----
 
 <br/>
 
@@ -418,14 +409,13 @@ The frontend follows an enterprise corporate design language inspired by industr
 
 ### Key UI Components
 
-- **NavBar** — Sticky top navigation with `#76b900` background, brand logo, page links, search and user icons
-- **Hero Section** — Full-viewport splash with parallax background image, bold headline typography, and CTA button
-- **Upload Zone** — Interactive drop zone with cloud icon, file type hints, loading pulse animation, and "Browse Files" hover button
-- **Score Card** — Large numeric display with animated progress bar and color-coded quality label badge
-- **Issue Cards** — Grid of detected problems with type pills, severity badges (HIGH/MEDIUM), and AI confidence percentages
-- **Footer** — Multi-column corporate footer with internal links and copyright
+- **NavBar**: Sticky top navigation with `#76b900` background, brand logo, page links, search and user icons
+- **Hero Section**: Full-viewport splash with parallax background image, bold headline typography, and CTA button
+- **Upload Zone**: Interactive drop zone with cloud icon, file type hints, loading pulse animation, and "Browse Files" hover button
+- **Score Card**: Large numeric display with animated progress bar and color-coded quality label badge
+- **Issue Cards**: Grid of detected problems with type pills, severity badges (HIGH/MEDIUM), and AI confidence percentages
+- **Footer**: Multi-column corporate footer with internal links and copyright
 
----
 
 <br/>
 
@@ -505,7 +495,6 @@ curl "http://localhost:8000/health"
 }
 ```
 
----
 
 <br/>
 
@@ -518,7 +507,7 @@ curl "http://localhost:8000/health"
 | **Full Name** | Konstanz Artificially Distorted Image Quality Database |
 | **Images** | 10,125 distorted images derived from 81 pristine source images |
 | **Distortion Types** | 25 types × 5 severity levels (blur, noise, color, contrast, etc.) |
-| **Score Format** | DMOS (Differential Mean Opinion Score) on a 1.0 – 5.0 scale |
+| **Score Format** | DMOS (Differential Mean Opinion Score) on a 1.0 to 5.0 scale |
 | **CSV File** | `backend/ml/kadid10k/image_labeled_by_per_noise.csv` |
 | **Image Directory** | `backend/ml/kadid10k/images/` |
 
@@ -528,14 +517,13 @@ curl "http://localhost:8000/health"
 |:---|:---|
 | **Full Name** | Konstanz Quality in the Wild Database |
 | **Images** | 10,073 authentically distorted images sourced from the web |
-| **Score Format** | MOS (Mean Opinion Score) on a 0.0 – 100.0 scale |
+| **Score Format** | MOS (Mean Opinion Score) on a 0.0 to 100.0 scale |
 | **CSV File** | `backend/ml/KonIQ-10k/koniq10k_distributions_sets.csv` |
 | **Image Directory** | `backend/ml/KonIQ-10k/512x384/` |
 
 > [!NOTE]
 > Both datasets must be downloaded separately and placed in the directories listed above before running `train.py`. The datasets are not included in this repository due to their large file sizes.
 
----
 
 <br/>
 
@@ -593,7 +581,6 @@ VisiMetric/
             └── api.js                # Axios HTTP client for backend communication
 ```
 
----
 
 <br/>
 
@@ -613,7 +600,6 @@ VisiMetric/
 |:---|:---|:---|
 | `VITE_API_URL` | `http://localhost:8000` | Backend API base URL |
 
----
 
 <br/>
 
@@ -651,7 +637,6 @@ curl http://localhost:8000/health
 
 Expected: `{"status": "healthy"}`
 
----
 
 <br/>
 
@@ -667,7 +652,6 @@ All major engineering decisions are formally documented in [`ARCHITECT_LOG.md`](
 | D-031 | NVIDIA corporate UI revamp | Professional enterprise-grade frontend aesthetic |
 | D-032 | Information architecture expansion | Complete routing with Solutions, Products, About, Policies, Privacy, Legal pages |
 
----
 
 <br/>
 
@@ -692,20 +676,18 @@ All major engineering decisions are formally documented in [`ARCHITECT_LOG.md`](
 | **Routing** | React Router DOM 6 | Client-side SPA navigation |
 | **Icons** | Font Awesome 6 | UI iconography |
 
----
 
 <br/>
 
 ## 🛣️ Roadmap
 
-- [ ] **GPU-Accelerated Training** — Full 5-epoch training on CUDA-enabled hardware for production-grade accuracy
-- [ ] **GradCAM Heatmaps** — Visual overlay showing which regions of the image the AI focused on
-- [ ] **Batch Upload** — Analyze multiple images simultaneously with aggregate statistics
-- [ ] **Export Reports** — PDF/CSV export of analysis results for compliance documentation
-- [ ] **Real-Time Camera Feed** — Live webcam quality monitoring dashboard
-- [ ] **Docker Containerization** — Single `docker-compose up` deployment
+- [ ] **GPU-Accelerated Training**: Full 5-epoch training on CUDA-enabled hardware for production-grade accuracy
+- [ ] **GradCAM Heatmaps**: Visual overlay showing which regions of the image the AI focused on
+- [ ] **Batch Upload**: Analyze multiple images simultaneously with aggregate statistics
+- [ ] **Export Reports**: PDF/CSV export of analysis results for compliance documentation
+- [ ] **Real-Time Camera Feed**: Live webcam quality monitoring dashboard
+- [ ] **Docker Containerization**: Single `docker-compose up` deployment
 
----
 
 <br/>
 
@@ -715,7 +697,6 @@ This project is developed by **Anshuman Pattnaik** as part of an academic assess
 
 The training pipeline utilizes the **KADID-10k** and **KonIQ-10k** datasets, which are intended for academic and non-commercial research purposes. All open-source dependencies (PyTorch, OpenCV, FastAPI, React) retain their respective licenses.
 
----
 
 <div align="center">
 
