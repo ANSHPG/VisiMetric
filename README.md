@@ -15,7 +15,7 @@
 
 <br/>
 
-<img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=1200&auto=format&fit=crop" alt="VisiMetric Hero" width="720" />
+[![VisiMetric Architecture Walkthrough](https://img.youtube.com/vi/_XXxZ0WIa6c/maxresdefault.jpg)](https://youtu.be/_XXxZ0WIa6c?si=RV3q7nF8piBQKRur)
 
 <br/>
 
